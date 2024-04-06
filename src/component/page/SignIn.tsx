@@ -1,16 +1,18 @@
-import {useRef} from "react";
+import {useEffect, useRef} from "react";
 import {Button, Form} from "react-bootstrap";
 import {SignInRequestBody} from "../apispec/user/signInSpec";
 import {UserResponseBody} from "../apispec/user/userSpec";
 import {useAppDispatch} from "../../store/hook";
 import {setLoginUser} from "../../store/slice/loginUser";
 import {useNavigate} from "react-router-dom";
+import $ from "jquery";
 
 function SignIn() {
     const navigate = useNavigate();
 
     const idRef = useRef<HTMLInputElement>(null);
     const pwRef = useRef<HTMLInputElement>(null);
+    const signInButtonRef = useRef<HTMLButtonElement>(null);
 
     const dispatch = useAppDispatch();
 
@@ -20,7 +22,7 @@ function SignIn() {
     ) {
         if (!userId || !password) {
             // TODO: do some business logic when it comes to empty input
-            console.error("id or password is empty");
+            alert("아이디와 패스워드를 입력하시오");
             return;
         }
 
@@ -38,6 +40,23 @@ function SignIn() {
         }
     }
 
+    useEffect(() => {
+        validateAndDisableButton();
+    }, []);
+
+    function validateAndDisableButton() {
+        const signInButtonJElement = $(signInButtonRef.current!);
+        if (!idRef.current?.value || !pwRef.current?.value) {
+            signInButtonJElement.attr("disabled", "true");
+        } else {
+            signInButtonJElement.removeAttr("disabled");
+        }
+    }
+
+    function onInputChange() {
+        validateAndDisableButton();
+    }
+
     return (
         <Form
             className="mx-auto"
@@ -45,7 +64,12 @@ function SignIn() {
         >
             <Form.Group className="mb-3" controlId="formId">
                 <Form.Label>아이디</Form.Label>
-                <Form.Control type="text" placeholder="Enter ID" ref={idRef} />
+                <Form.Control
+                    type="text"
+                    placeholder="Enter ID"
+                    ref={idRef}
+                    onChange={onInputChange}
+                />
                 <Form.Text className="text-muted">
                     비어 있으면 로그인 안 시켜줍니다.
                 </Form.Text>
@@ -56,6 +80,7 @@ function SignIn() {
                     type="password"
                     placeholder="Password"
                     ref={pwRef}
+                    onChange={onInputChange}
                 />
                 <Form.Text>여기도 비어 있으면 로그인 안 시켜줍니다.</Form.Text>
             </Form.Group>
@@ -65,6 +90,7 @@ function SignIn() {
                 onClick={() =>
                     doSigningIn(idRef.current?.value, idRef.current?.value)
                 }
+                ref={signInButtonRef}
             >
                 로그인
             </Button>
