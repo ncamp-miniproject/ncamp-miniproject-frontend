@@ -5,8 +5,11 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Home from "./component/page/Home";
 import NotFound from "./component/page/NotFound";
 import SignIn from "./component/page/SignIn";
+import {useEffect} from "react";
 
 function App() {
+    useEffect(() => {}, []);
+
     return (
         <>
             <NavHeader />
