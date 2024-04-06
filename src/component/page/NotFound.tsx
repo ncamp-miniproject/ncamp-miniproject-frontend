@@ -1,10 +1,13 @@
-import {Container} from "react-bootstrap";
+import "../../css/NotFound.css";
 
 function NotFound() {
     return (
-        <Container className="justify-content-md-center">
-            <h1>404 Not Found</h1>
-        </Container>
+        <div className="content-container">
+            <header className="page-header">
+                <h1>404 Not Found</h1>
+            </header>
+            <p>경로에 해당하는 리소스가 없습니다.</p>
+        </div>
     );
 }
 
