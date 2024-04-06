@@ -1,6 +1,7 @@
 import {Button, Container, Nav, Navbar} from "react-bootstrap";
 import {useAppSelector} from "../../store/hook";
 import {Role} from "../../domain/user";
+import {useNavigate} from "react-router-dom";
 
 const displayMode = new Map<Role, JSX.Element>();
 
@@ -87,10 +88,16 @@ function NavbarAccountMenuForLoginUser() {
 }
 
 function NavbarAccountMenuForNonLoginUser() {
+    const navigate = useNavigate();
     return (
-        <Nav className="ml-auto" style={{ gap: "12px" }}>
+        <Nav className="ml-auto" style={{gap: "12px"}}>
             <Button variant="outline-success">회원가입</Button>
-            <Button variant="outline-primary">로그인</Button>
+            <Button
+                variant="outline-primary"
+                onClick={() => navigate("/sign-in")}
+            >
+                로그인
+            </Button>
         </Nav>
     );
 }
