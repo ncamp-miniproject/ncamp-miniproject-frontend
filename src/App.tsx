@@ -8,10 +8,19 @@ import SignIn from "./component/page/SignIn";
 import {useEffect} from "react";
 import axios from "axios";
 import SignUp from "./component/page/SignUp";
+import {Metadata, setMetadata} from "./store/slice/metadata";
+import {useAppDispatch} from "./store/hook";
 
 function App() {
+    const dispatch = useAppDispatch();
+
     useEffect(() => {
         console.log("App.tsx");
+
+        axios.get("metadata.json").then((response) => {
+            const metadata = response.data as Metadata;
+            dispatch(setMetadata(metadata));
+        });
 
         // TODO: authenticate by sending request to the back-end server
     }, []);

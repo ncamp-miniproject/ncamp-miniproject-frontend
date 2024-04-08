@@ -1,5 +1,6 @@
 import {useState} from "react";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
@@ -10,7 +11,9 @@ export default function SignUp() {
     const [ssn, setSsn] = useState("");
     const [phone1, setPhone1] = useState("");
     const [phone2, setPhone2] = useState("");
-    const [role, setRole] = useState("");
+    const [role, setRole] = useState("user");
+
+    const navigate = useNavigate();
 
     function onClickSignUpButton() {
         console.log("email=" + email);
@@ -22,15 +25,22 @@ export default function SignUp() {
         console.log("phone1=" + phone1);
         console.log("phone2=" + phone2);
         console.log("role=" + role);
+
+        alert("회원가입이 완료되었습니다.");
+        navigate("/sign-in");
+    }
+
+    function sendAuthenticationEmail() {
+        // TODO
+    }
+
+    function checkDuplication() {
+        // TODO
     }
 
     return (
         <Container>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="emailText">
                 <Form.Label column sm="2">
                     이메일
                 </Form.Label>
@@ -42,14 +52,15 @@ export default function SignUp() {
                     />
                 </Col>
                 <Col sm="2">
-                    <Button variant="outline-secondary">이메일 인증</Button>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={sendAuthenticationEmail}
+                    >
+                        이메일 인증
+                    </Button>
                 </Col>
             </Form.Group>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="idText">
                 <Form.Label column sm="2">
                     아이디
                 </Form.Label>
@@ -61,14 +72,15 @@ export default function SignUp() {
                     />
                 </Col>
                 <Col sm="2">
-                    <Button variant="outline-secondary">중복확인</Button>
+                    <Button
+                        variant="outline-secondary"
+                        onClick={checkDuplication}
+                    >
+                        중복확인
+                    </Button>
                 </Col>
             </Form.Group>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="password">
                 <Form.Label column sm="2">
                     패스워드
                 </Form.Label>
@@ -79,11 +91,7 @@ export default function SignUp() {
                     />
                 </Col>
             </Form.Group>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="passwordCheck">
                 <Form.Label column sm="2">
                     패스워드 확인
                 </Form.Label>
@@ -94,11 +102,7 @@ export default function SignUp() {
                     />
                 </Col>
             </Form.Group>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="userName">
                 <Form.Label column sm="2">
                     이름
                 </Form.Label>
@@ -109,11 +113,7 @@ export default function SignUp() {
                     />
                 </Col>
             </Form.Group>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="ssn">
                 <Form.Label column sm="2">
                     주민번호
                 </Form.Label>
@@ -124,11 +124,7 @@ export default function SignUp() {
                     />
                 </Col>
             </Form.Group>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="phoneNumber">
                 <Form.Label column sm="2">
                     휴대전화번호
                 </Form.Label>
@@ -146,11 +142,7 @@ export default function SignUp() {
                     />
                 </Col>
             </Form.Group>
-            <Form.Group
-                as={Row}
-                className="mb-3"
-                controlId="formPlaintextEmail"
-            >
+            <Form.Group as={Row} className="mb-3" controlId="role">
                 <Form.Label column sm="2">
                     역할
                 </Form.Label>
