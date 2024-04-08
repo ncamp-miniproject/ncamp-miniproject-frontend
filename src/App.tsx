@@ -7,9 +7,12 @@ import NotFound from "./component/page/NotFound";
 import SignIn from "./component/page/SignIn";
 import {useEffect} from "react";
 import axios from "axios";
+import SignUp from "./component/page/SignUp";
 
 function App() {
     useEffect(() => {
+        console.log("App.tsx");
+
         // TODO: authenticate by sending request to the back-end server
     }, []);
 
@@ -20,6 +23,7 @@ function App() {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/sign-in" element={<SignIn />} />
+                    <Route path="/sign-up" element={<SignUp />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>

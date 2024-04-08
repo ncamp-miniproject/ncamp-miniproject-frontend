@@ -91,7 +91,12 @@ function NavbarAccountMenuForNonLoginUser() {
     const navigate = useNavigate();
     return (
         <Nav className="ml-auto" style={{gap: "12px"}}>
-            <Button variant="outline-success">회원가입</Button>
+            <Button
+                variant="outline-success"
+                onClick={() => navigate("/sign-up")}
+            >
+                회원가입
+            </Button>
             <Button
                 variant="outline-primary"
                 onClick={() => navigate("/sign-in")}
