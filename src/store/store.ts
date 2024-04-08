@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import loginUser from "./slice/loginUser";
+import accessToken from "./slice/accessToken";
 
 export const store = configureStore({
     reducer: {
-        loginUser
+        loginUser,
+        accessToken
     }
 });
 

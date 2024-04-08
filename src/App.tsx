@@ -6,9 +6,12 @@ import Home from "./component/page/Home";
 import NotFound from "./component/page/NotFound";
 import SignIn from "./component/page/SignIn";
 import {useEffect} from "react";
+import axios from "axios";
 
 function App() {
-    useEffect(() => {}, []);
+    useEffect(() => {
+        // TODO: authenticate by sending request to the back-end server
+    }, []);
 
     return (
         <>
