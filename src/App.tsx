@@ -10,6 +10,7 @@ import axios from "axios";
 import SignUp from "./component/page/SignUp";
 import {Metadata, setMetadata} from "./store/slice/metadata";
 import {useAppDispatch} from "./store/hook";
+import ProductList from "./component/page/ProductList";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/products" element={<ProductList />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>

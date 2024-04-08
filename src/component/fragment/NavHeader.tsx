@@ -40,7 +40,7 @@ function NavHeader() {
 function NavbarMenuForCommon() {
     return (
         <>
-            <Nav.Link href="#">상품검색</Nav.Link>
+            <Nav.Link href="/products">상품검색</Nav.Link>
         </>
     );
 }
