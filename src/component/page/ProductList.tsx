@@ -12,13 +12,13 @@ import {
     Row
 } from "react-bootstrap";
 import {useAppSelector} from "../../store/hook";
-import axios from "axios";
 import {
     CategoryResponseEntity,
     ProductResponseEntity
 } from "../apispec/user/productSpec";
 import {Category, Product} from "../../domain/product";
 import {PPagination} from "../../domain/pagination";
+import httpRequest from "../../network/httpRequest";
 
 export default function ProductList() {
     const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -38,7 +38,7 @@ export default function ProductList() {
 
     useEffect(() => {
         apiUrl &&
-            axios.get(`${apiUrl}/api/products`).then((response) => {
+            httpRequest(`${apiUrl}/api/products`, (response) => {
                 const responseEntity = response.data as ProductResponseEntity;
 
                 console.log(responseEntity);
@@ -53,7 +53,7 @@ export default function ProductList() {
             });
 
         apiUrl &&
-            axios.get(`${apiUrl}/api/categories`).then((response) => {
+            httpRequest(`${apiUrl}/api/categories`, (response) => {
                 const responseEntity = response.data as CategoryResponseEntity;
                 setCategoryList(responseEntity.map((re) => re as Category));
             });
