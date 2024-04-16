@@ -10,7 +10,7 @@ import axios from "axios";
 import SignUp from "./component/page/SignUp";
 import {Metadata, setMetadata} from "./store/slice/metadata";
 import {useAppDispatch} from "./store/hook";
-import ProductList from "./component/page/ProductList";
+import ProductList from "./component/page/product/ProductList";
 
 function App() {
     const dispatch = useAppDispatch();
