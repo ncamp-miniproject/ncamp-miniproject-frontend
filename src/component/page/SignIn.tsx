@@ -1,7 +1,7 @@
 import {useEffect, useRef} from "react";
 import {Button, Form} from "react-bootstrap";
-import {SignInRequestBody} from "../apispec/user/signInSpec";
-import {UserResponseBody} from "../apispec/user/userSpec";
+import {SignInRequestBody} from "../../network/user/signInSpec";
+import {UserResponseBody} from "../../network/user/userSpec";
 import {useAppDispatch} from "../../store/hook";
 import {setLoginUser} from "../../store/slice/loginUser";
 import {useNavigate} from "react-router-dom";
