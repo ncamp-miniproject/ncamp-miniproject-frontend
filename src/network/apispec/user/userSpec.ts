@@ -8,7 +8,7 @@
 
 export type UserResponseBody = {
     userId: string;
-    userName: string;
+    nameOfUser: string;
     role: string;
     ssn?: string;
     phone?: string;

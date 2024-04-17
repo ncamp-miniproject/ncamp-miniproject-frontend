@@ -1,7 +1,7 @@
 import {useEffect, useRef} from "react";
 import {Button, Form} from "react-bootstrap";
-import {SignInRequestBody} from "../../network/user/signInSpec";
-import {UserResponseBody} from "../../network/user/userSpec";
+import {SignInRequestBody} from "../../network/apispec/user/signInSpec";
+import {UserResponseBody} from "../../network/apispec/user/userSpec";
 import {useAppDispatch} from "../../store/hook";
 import {setLoginUser} from "../../store/slice/loginUser";
 import {useNavigate} from "react-router-dom";
@@ -111,7 +111,7 @@ async function getUserInfoFromServer(userId: string) {
 
     const dummyData: UserResponseBody = {
         userId: "dummyId",
-        userName: "dummyName",
+        nameOfUser: "dummyName",
         role: "user",
         email: "dummy@sample.com",
         regDate: "2017-03-24"

@@ -46,9 +46,10 @@ function NavbarMenuForCommon() {
 }
 
 function NavbarMenuForCommonLoginUser() {
+    const loginUser = useAppSelector((state) => state.loginUser).value;
     return (
         <>
-            <Nav.Link href="#">개인정보조회</Nav.Link>
+            <Nav.Link href={`/users/${loginUser?.userId}`}>개인정보조회</Nav.Link>
         </>
     );
 }
@@ -56,7 +57,7 @@ function NavbarMenuForCommonLoginUser() {
 function NavbarMenuForAdmin() {
     return (
         <>
-            <Nav.Link href="#">회원정보조회</Nav.Link>
+            <Nav.Link href="/users">회원정보조회</Nav.Link>
             <Nav.Link href="#">판매조회</Nav.Link>
         </>
     );

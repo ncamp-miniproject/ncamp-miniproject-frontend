@@ -16,7 +16,7 @@ import {useAppSelector} from "../../../store/hook";
 import {
     CategoryResponseEntity,
     ProductListResponseEntity
-} from "../../../network/product/productSpec";
+} from "../../../network/apispec/product/productSpec";
 import {Category, Product} from "../../../domain/product";
 import {PPagination} from "../../../domain/pagination";
 import httpRequest from "../../../network/httpRequest";

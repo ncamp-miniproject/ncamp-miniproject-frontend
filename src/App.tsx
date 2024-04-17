@@ -11,6 +11,10 @@ import SignUp from "./component/page/SignUp";
 import {Metadata, setMetadata} from "./store/slice/metadata";
 import {useAppDispatch} from "./store/hook";
 import ProductList from "./component/page/product/ProductList";
+import {setLoginUser} from "./store/slice/loginUser";
+import {Role} from "./domain/user";
+import UserList from "./component/page/user/UserList";
+import UserInfo from "./component/page/user/UserInfo";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -18,7 +22,9 @@ function App() {
     useEffect(() => {
         console.log("App.tsx");
 
-        axios.get("metadata.json").then((response) => {
+        dispatch(setLoginUser({userId: "user08", role: Role.ADMIN}));
+
+        axios.get("/metadata.json").then((response) => {
             const metadata = response.data as Metadata;
             dispatch(setMetadata(metadata));
         });
@@ -35,6 +41,8 @@ function App() {
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />
                     <Route path="/products" element={<ProductList />} />
+                    <Route path="/users/:userId" element={<UserInfo />} />
+                    <Route path="/users" element={<UserList />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
