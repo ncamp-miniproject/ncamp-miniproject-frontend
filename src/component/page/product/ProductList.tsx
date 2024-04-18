@@ -15,7 +15,7 @@ import {useAppSelector} from "../../../store/hook";
 import {
     CategoryResponseEntity,
     ProductListResponseEntity
-} from "../../../network/apispec/product/productSpec";
+} from "../../../network/apispec/product/productListSpec";
 import {Category, Product} from "../../../domain/product";
 import {PPagination} from "../../../domain/pagination";
 import httpRequest from "../../../network/httpRequest";
@@ -86,7 +86,7 @@ export default function ProductList() {
 
     useEffect(() => {
         setCurrentPage(1);
-    }, [apiRequestOptions, selectedCategoryNo]);
+    }, [apiRequestOptions, selectedCategoryNo, pageSize]);
 
     let searchConditionForm;
     if (searchCondition === "1") {
@@ -414,10 +414,11 @@ function ProductItem({
     const navigate = useNavigate();
     const trimmedProdDetail =
         prodDetail.length > 15 ? prodDetail.substring(0, 15) : "";
+    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     return (
         <Card onClick={() => navigate(`${prodNo}`)}>
             <Card.Header>{prodNo}</Card.Header>
-            <Card.Img variant="top" src={imageFileName} />
+            <Card.Img variant="top" src={apiUrl ? `${apiUrl}/images/uploadFiles/${imageFileName}` : ""} />
             <Card.Body>
                 <Card.Title>{prodName}</Card.Title>
                 <Card.Text>{price}</Card.Text>

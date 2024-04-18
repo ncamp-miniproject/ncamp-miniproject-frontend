@@ -1,10 +1,16 @@
-import {PPagination} from "../../../domain/pagination";
-import {Category, Product} from "../../../domain/product";
+import { Category, ProductImage } from "../../../domain/product";
 
-export type CategoryResponseEntity = Category[];
+export type ProductInfoRequestParam = {
+    userId: string;
+}
 
-export type ProductListResponseEntity = {
-    count: number;
-    products: Product[];
-    pagination: PPagination;
+export type ProductInfoResponseBody = {
+    prodNo: number;
+    prodName: string;
+    prodDetail: string;
+    price: number;
+    manuDate: string;
+    stock: number;
+    productImages: ProductImage[];
+    category: Category;
 };

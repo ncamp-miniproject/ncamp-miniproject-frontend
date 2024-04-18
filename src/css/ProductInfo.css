@@ -1,0 +1,30 @@
+.data-label {
+    font-size: 16px;
+}
+
+.data-display {
+    font-size: 20px;
+}
+
+.img-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bi {
+    cursor: pointer;
+}
+
+.thumbnail {
+    width: 70%;
+}
+
+.img-t {
+    width: 50%;
+}
+
+.img-display {
+    width: 100%;
+}
