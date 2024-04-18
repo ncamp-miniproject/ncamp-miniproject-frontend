@@ -15,6 +15,7 @@ import {setLoginUser} from "./store/slice/loginUser";
 import {Role} from "./domain/user";
 import UserList from "./component/page/user/UserList";
 import UserInfo from "./component/page/user/UserInfo";
+import ProductInfo from "./component/page/product/ProductInfo";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -40,6 +41,7 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />
+                    <Route path="/products/:prodNo" element={<ProductInfo />} />
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/users/:userId" element={<UserInfo />} />
                     <Route path="/users" element={<UserList />} />

@@ -2,12 +2,12 @@ import {useEffect, useState} from "react";
 import {
     Button,
     ButtonGroup,
+    Card,
     Col,
     Container,
     Dropdown,
     DropdownButton,
     Form,
-    Image,
     ListGroup,
     Row
 } from "react-bootstrap";
@@ -21,6 +21,8 @@ import {PPagination} from "../../../domain/pagination";
 import httpRequest from "../../../network/httpRequest";
 import PageDisplay from "../../fragment/PageDisplay";
 import {ApiRequestOptions} from "../../../domain/ApiRequestOptions";
+import {useNavigate} from "react-router-dom";
+import PageSizeSelection from "../../fragment/PageSizeSelection";
 
 export default function ProductList() {
     const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -37,8 +39,11 @@ export default function ProductList() {
     });
     const [apiRequestOptions, setApiRequestOptions] =
         useState<ApiRequestOptions>({});
-    const [selectedCategoryNo, setSelectedCategoryNo] = useState<number | undefined>(undefined);
+    const [selectedCategoryNo, setSelectedCategoryNo] = useState<
+        number | undefined
+    >(undefined);
     const [currentPage, setCurrentPage] = useState<number>(1);
+    const [pageSize, setPageSize] = useState<number>(3);
     const [searchKeyword, setSearchKeyword] = useState<string>("");
     const [searchCondition, setSearchCondition] = useState<string>("1");
     const [priceLowerBound, setPriceLowerBound] = useState<number>(0);
@@ -67,7 +72,8 @@ export default function ProductList() {
                     ...apiRequestOptions,
                     page: currentPage,
                     categoryNo: selectedCategoryNo,
-                    searchCondition
+                    searchCondition,
+                    pageSize
                 }
             );
 
@@ -76,7 +82,7 @@ export default function ProductList() {
                 const responseEntity = response.data as CategoryResponseEntity;
                 setCategoryList(responseEntity.map((re) => re as Category));
             });
-    }, [apiUrl, apiRequestOptions, currentPage, selectedCategoryNo]);
+    }, [apiUrl, apiRequestOptions, currentPage, selectedCategoryNo, pageSize]);
 
     useEffect(() => {
         setCurrentPage(1);
@@ -190,42 +196,7 @@ export default function ProductList() {
                             apiRequestOptions={apiRequestOptions}
                             setApiRequestOptions={setApiRequestOptions}
                         />
-                        <DropdownButton
-                            id="pageSize"
-                            title="페이지 크기"
-                            variant="secondary"
-                        >
-                            <Dropdown.Item
-                                onClick={() =>
-                                    setApiRequestOptions({
-                                        ...apiRequestOptions,
-                                        pageSize: 3
-                                    })
-                                }
-                            >
-                                3
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                                onClick={() =>
-                                    setApiRequestOptions({
-                                        ...apiRequestOptions,
-                                        pageSize: 5
-                                    })
-                                }
-                            >
-                                5
-                            </Dropdown.Item>
-                            <Dropdown.Item
-                                onClick={() =>
-                                    setApiRequestOptions({
-                                        ...apiRequestOptions,
-                                        pageSize: 10
-                                    })
-                                }
-                            >
-                                10
-                            </Dropdown.Item>
-                        </DropdownButton>
+                        <PageSizeSelection setPageSize={setPageSize} />
                     </div>
                     <PageDisplay
                         pagination={pagination}
@@ -351,7 +322,9 @@ function CategoryList({
 }: {
     categories: Category[];
     selectedCategoryNo: number | undefined;
-    setSelectedCategoryNo: React.Dispatch<React.SetStateAction<number | undefined>>;
+    setSelectedCategoryNo: React.Dispatch<
+        React.SetStateAction<number | undefined>
+    >;
 }) {
     return (
         <ListGroup>
@@ -381,73 +354,81 @@ function CategoryList({
     );
 }
 
+function ProductDisplay({products}: {products: Product[]}) {
+    return (
+        <Container>
+            <Row>
+                {products.map(
+                    (
+                        {
+                            prodNo,
+                            prodName,
+                            prodDetail,
+                            price,
+                            manuDate,
+                            stock,
+                            productImages,
+                            category
+                        },
+                        idx
+                    ) => (
+                        <Col md={4} key={`col-${idx}`}>
+                            <ProductItem
+                                key={`prod-item-${idx}`}
+                                prodNo={prodNo}
+                                prodName={prodName}
+                                prodDetail={prodDetail}
+                                price={price}
+                                imageFileName={
+                                    productImages && productImages.length >= 1
+                                        ? productImages[0].fileName
+                                        : ""
+                                }
+                                category={category}
+                            />
+                        </Col>
+                    )
+                )}
+            </Row>
+        </Container>
+    );
+}
+
 type ProductItemDisplay = {
+    prodNo: number;
     prodName: string;
+    prodDetail: string;
     price: number;
-    manuDate: string;
     category: Category | null;
     imageFileName: string;
 };
 
-function ProductDisplay({products}: {products: Product[]}) {
-    return (
-        <div style={productListStyle}>
-            {products.map((prod) => (
-                <ProductItem
-                    key={`prod-item-${prod.prodNo}`}
-                    prodName={prod.prodName}
-                    price={prod.price}
-                    manuDate={prod.manuDate.toISOString()}
-                    category={prod.category}
-                    imageFileName={
-                        prod.productImages && prod.productImages.length >= 1
-                            ? prod.productImages[0].fileName
-                            : ""
-                    }
-                />
-            ))}
-        </div>
-    );
-}
-
-const productListStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    gap: "12px"
-};
-
 function ProductItem({
+    prodNo,
     prodName,
+    prodDetail,
     price,
-    manuDate,
     category,
     imageFileName
 }: ProductItemDisplay) {
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
+    const navigate = useNavigate();
+    const trimmedProdDetail =
+        prodDetail.length > 15 ? prodDetail.substring(0, 15) : "";
     return (
-        <Row style={prodItemStyle}>
-            <Col md={4}>
-                {apiUrl && (
-                    <Image
-                        src={`${apiUrl}/images/uploadFiles/${imageFileName}`}
-                        alt="product"
-                        thumbnail
-                    />
-                )}
-            </Col>
-            <Col md={8}>
-                <p>{prodName}</p>
-                <p>{price}</p>
-                <p>{category ? category.categoryName : "카테고리 없음"}</p>
-                <p>{manuDate}</p>
-            </Col>
-        </Row>
+        <Card onClick={() => navigate(`${prodNo}`)}>
+            <Card.Header>{prodNo}</Card.Header>
+            <Card.Img variant="top" src={imageFileName} />
+            <Card.Body>
+                <Card.Title>{prodName}</Card.Title>
+                <Card.Text>{price}</Card.Text>
+                <Card.Text>
+                    {trimmedProdDetail}
+                    {prodDetail.length > 15 ? "..." : ""}
+                </Card.Text>
+                <Card.Text>
+                    {category ? category.categoryName : "카테고리 없음"}
+                </Card.Text>
+            </Card.Body>
+        </Card>
     );
 }
-
-const prodItemStyle: React.CSSProperties = {
-    border: "1px solid #ced4da",
-    borderRadius: "10px",
-    padding: "8px"
-};
