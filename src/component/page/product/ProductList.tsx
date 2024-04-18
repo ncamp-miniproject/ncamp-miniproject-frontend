@@ -9,7 +9,6 @@ import {
     Form,
     Image,
     ListGroup,
-    Pagination,
     Row
 } from "react-bootstrap";
 import {useAppSelector} from "../../../store/hook";
@@ -20,16 +19,8 @@ import {
 import {Category, Product} from "../../../domain/product";
 import {PPagination} from "../../../domain/pagination";
 import httpRequest from "../../../network/httpRequest";
-
-type ApiRequestOptions = {
-    menu?: string;
-    page?: number;
-    pageSize?: number;
-    searchKeyword?: string;
-    categoryNo?: number;
-    orderBy?: string;
-    ascend?: boolean;
-};
+import PageDisplay from "../../fragment/PageDisplay";
+import {ApiRequestOptions} from "../../../domain/ApiRequestOptions";
 
 export default function ProductList() {
     const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -46,6 +37,8 @@ export default function ProductList() {
     });
     const [apiRequestOptions, setApiRequestOptions] =
         useState<ApiRequestOptions>({});
+    const [selectedCategoryNo, setSelectedCategoryNo] = useState<number | undefined>(undefined);
+    const [currentPage, setCurrentPage] = useState<number>(1);
     const [searchKeyword, setSearchKeyword] = useState<string>("");
     const [searchCondition, setSearchCondition] = useState<string>("1");
     const [priceLowerBound, setPriceLowerBound] = useState<number>(0);
@@ -72,6 +65,8 @@ export default function ProductList() {
                 },
                 {
                     ...apiRequestOptions,
+                    page: currentPage,
+                    categoryNo: selectedCategoryNo,
                     searchCondition
                 }
             );
@@ -81,7 +76,11 @@ export default function ProductList() {
                 const responseEntity = response.data as CategoryResponseEntity;
                 setCategoryList(responseEntity.map((re) => re as Category));
             });
-    }, [apiUrl, apiRequestOptions]);
+    }, [apiUrl, apiRequestOptions, currentPage, selectedCategoryNo]);
+
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [apiRequestOptions, selectedCategoryNo]);
 
     let searchConditionForm;
     if (searchCondition === "1") {
@@ -97,9 +96,9 @@ export default function ProductList() {
                     if (e.key === "Enter") {
                         setApiRequestOptions({
                             ...apiRequestOptions,
-                            searchKeyword,
-                            page: 1
+                            searchKeyword
                         });
+                        setCurrentPage(1);
                     }
                 }}
             />
@@ -117,8 +116,7 @@ export default function ProductList() {
                         if (e.key === "Enter") {
                             setApiRequestOptions({
                                 ...apiRequestOptions,
-                                searchKeyword: `${priceLowerBound}-${priceUpperBound}`,
-                                page: 1
+                                searchKeyword: `${priceLowerBound}-${priceUpperBound}`
                             });
                         }
                     }}
@@ -134,8 +132,7 @@ export default function ProductList() {
                         if (e.key === "Enter") {
                             setApiRequestOptions({
                                 ...apiRequestOptions,
-                                searchKeyword: `${priceLowerBound}-${priceUpperBound}`,
-                                page: 1
+                                searchKeyword: `${priceLowerBound}-${priceUpperBound}`
                             });
                         }
                     }}
@@ -150,8 +147,8 @@ export default function ProductList() {
                 <Col md={3}>
                     <CategoryList
                         categories={categoryList}
-                        apiRequestOptions={apiRequestOptions}
-                        setApiRequestOptions={setApiRequestOptions}
+                        selectedCategoryNo={selectedCategoryNo}
+                        setSelectedCategoryNo={setSelectedCategoryNo}
                     />
                 </Col>
                 <Col md={9} style={productDisplayStyle}>
@@ -174,8 +171,7 @@ export default function ProductList() {
                                 onClick={(e) => {
                                     setApiRequestOptions({
                                         ...apiRequestOptions,
-                                        searchKeyword,
-                                        page: 1
+                                        searchKeyword
                                     });
                                 }}
                             >
@@ -203,8 +199,7 @@ export default function ProductList() {
                                 onClick={() =>
                                     setApiRequestOptions({
                                         ...apiRequestOptions,
-                                        pageSize: 3,
-                                        page: 1
+                                        pageSize: 3
                                     })
                                 }
                             >
@@ -214,8 +209,7 @@ export default function ProductList() {
                                 onClick={() =>
                                     setApiRequestOptions({
                                         ...apiRequestOptions,
-                                        pageSize: 5,
-                                        page: 1
+                                        pageSize: 5
                                     })
                                 }
                             >
@@ -225,8 +219,7 @@ export default function ProductList() {
                                 onClick={() =>
                                     setApiRequestOptions({
                                         ...apiRequestOptions,
-                                        pageSize: 10,
-                                        page: 1
+                                        pageSize: 10
                                     })
                                 }
                             >
@@ -236,8 +229,7 @@ export default function ProductList() {
                     </div>
                     <PageDisplay
                         pagination={pagination}
-                        apiRequestOptions={apiRequestOptions}
-                        setApiRequestOptions={setApiRequestOptions}
+                        setCurrentPage={setCurrentPage}
                     />
                     <p>전체 {count}개 상품</p>
                     <ProductDisplay products={products} />
@@ -274,8 +266,7 @@ function SortButtonGroup({
                         setApiRequestOptions({
                             ...apiRequestOptions,
                             orderBy: "prodName",
-                            ascend: true,
-                            page: 1
+                            ascend: true
                         })
                     }
                 >
@@ -286,8 +277,7 @@ function SortButtonGroup({
                         setApiRequestOptions({
                             ...apiRequestOptions,
                             orderBy: "prodName",
-                            ascend: false,
-                            page: 1
+                            ascend: false
                         })
                     }
                 >
@@ -304,8 +294,7 @@ function SortButtonGroup({
                         setApiRequestOptions({
                             ...apiRequestOptions,
                             orderBy: "price",
-                            ascend: true,
-                            page: 1
+                            ascend: true
                         })
                     }
                 >
@@ -316,8 +305,7 @@ function SortButtonGroup({
                         setApiRequestOptions({
                             ...apiRequestOptions,
                             orderBy: "price",
-                            ascend: false,
-                            page: 1
+                            ascend: false
                         })
                     }
                 >
@@ -334,8 +322,7 @@ function SortButtonGroup({
                         setApiRequestOptions({
                             ...apiRequestOptions,
                             orderBy: "regDate",
-                            ascend: true,
-                            page: 1
+                            ascend: true
                         })
                     }
                 >
@@ -346,8 +333,7 @@ function SortButtonGroup({
                         setApiRequestOptions({
                             ...apiRequestOptions,
                             orderBy: "regDate",
-                            ascend: false,
-                            page: 1
+                            ascend: false
                         })
                     }
                 >
@@ -360,29 +346,20 @@ function SortButtonGroup({
 
 function CategoryList({
     categories,
-    apiRequestOptions,
-    setApiRequestOptions
+    selectedCategoryNo: categoryNo,
+    setSelectedCategoryNo: setCategoryNo
 }: {
     categories: Category[];
-    apiRequestOptions: ApiRequestOptions;
-    setApiRequestOptions: React.Dispatch<
-        React.SetStateAction<ApiRequestOptions>
-    >;
+    selectedCategoryNo: number | undefined;
+    setSelectedCategoryNo: React.Dispatch<React.SetStateAction<number | undefined>>;
 }) {
-    const [selectedCategoryNoCurrently, setSelectedCategoryNoCurrently] =
-        useState<number | undefined>(undefined);
     return (
         <ListGroup>
             <ListGroup.Item
                 action
-                active={!selectedCategoryNoCurrently}
+                active={!categoryNo}
                 onClick={() => {
-                    setSelectedCategoryNoCurrently(undefined);
-                    setApiRequestOptions({
-                        ...apiRequestOptions,
-                        categoryNo: undefined,
-                        page: 1
-                    });
+                    setCategoryNo(undefined);
                 }}
             >
                 모든 상품
@@ -393,69 +370,14 @@ function CategoryList({
                         action
                         key={`category-${category.categoryNo}`}
                         onClick={() => {
-                            setSelectedCategoryNoCurrently(category.categoryNo);
-                            setApiRequestOptions({
-                                ...apiRequestOptions,
-                                categoryNo: category.categoryNo,
-                                page: 1
-                            });
+                            setCategoryNo(category.categoryNo);
                         }}
-                        active={
-                            selectedCategoryNoCurrently === category.categoryNo
-                        }
+                        active={categoryNo === category.categoryNo}
                     >
                         {category.categoryName}
                     </ListGroup.Item>
                 ))}
         </ListGroup>
-    );
-}
-
-function PageDisplay({
-    pagination,
-    apiRequestOptions,
-    setApiRequestOptions
-}: {
-    pagination: PPagination;
-    apiRequestOptions: ApiRequestOptions;
-    setApiRequestOptions: React.Dispatch<
-        React.SetStateAction<ApiRequestOptions>
-    >;
-}) {
-    return (
-        <Pagination>
-            <Pagination.Prev
-                disabled={!pagination.previousPageSetAvailable}
-                onClick={() =>
-                    setApiRequestOptions({
-                        ...apiRequestOptions,
-                        page: pagination.previousPageSetEntry
-                    })
-                }
-            />
-            {pagination.pagesToDisplay.map((page) => {
-                return (
-                    <Pagination.Item
-                        key={`page-${page}`}
-                        active={page === pagination.currentPage}
-                        onClick={() => {
-                            setApiRequestOptions({...apiRequestOptions, page});
-                        }}
-                    >
-                        {page}
-                    </Pagination.Item>
-                );
-            })}
-            <Pagination.Next
-                disabled={!pagination.nextPageSetAvailable}
-                onClick={() =>
-                    setApiRequestOptions({
-                        ...apiRequestOptions,
-                        page: pagination.nextPageSetEntry
-                    })
-                }
-            />
-        </Pagination>
     );
 }
 
