@@ -4,7 +4,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useAppSelector} from "../../../store/hook";
 import {useEffect, useState} from "react";
 import {ProductImage} from "../../../domain/product";
-import httpRequest from "../../../network/httpRequest";
+import httpGetRequest from "../../../network/httpRequest";
 import {
     ProductInfoRequestParam,
     ProductInfoResponseBody
@@ -24,7 +24,7 @@ export default function ProductInfo() {
         apiUrl &&
             prodNo &&
             loginUser &&
-            httpRequest(
+            httpGetRequest(
                 `${apiUrl}/api/products/${prodNo}`,
                 (response) => {
                     const data = response.data as ProductInfoResponseBody;

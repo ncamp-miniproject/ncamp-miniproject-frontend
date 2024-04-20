@@ -7,7 +7,7 @@ import {
 } from "../../../network/apispec/product/productListSpec";
 import {Category, Product} from "../../../domain/product";
 import {PPagination} from "../../../domain/pagination";
-import httpRequest from "../../../network/httpRequest";
+import httpRequest, {HttpMethod} from "../../../network/httpRequest";
 import PageDisplay from "../../fragment/PageDisplay";
 import {useSearchParams} from "react-router-dom";
 import PageSizeSelection from "../../fragment/PageSizeSelection";
@@ -37,6 +37,12 @@ export default function ProductList() {
     const searchConditionRef = useRef<HTMLSelectElement>(null);
 
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
+
+    const params = {} as any;
+    queryParameters.forEach((v, k) => {
+        params[k] = v;
+    });
+    console.log(params);
     useEffect(() => {
         apiUrl &&
             httpRequest(
@@ -55,7 +61,8 @@ export default function ProductList() {
                     setCount(responseEntity.count);
                     setPagination(responseEntity.pagination);
                 },
-                queryParameters
+                params,
+                HttpMethod.GET
             );
 
         apiUrl &&

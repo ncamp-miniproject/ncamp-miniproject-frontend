@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Col, Container, ListGroup, Row} from "react-bootstrap";
 import {UserListResponseBody} from "../../../network/apispec/user/userListSpec";
-import httpRequest from "../../../network/httpRequest";
+import httpGetRequest from "../../../network/httpRequest";
 import {useAppSelector} from "../../../store/hook";
 import {UserResponseBody} from "../../../network/apispec/user/userSpec";
 import {useNavigate, useSearchParams} from "react-router-dom";
@@ -29,7 +29,7 @@ export default function UserList() {
 
     useEffect(() => {
         apiUrl &&
-            httpRequest(
+            httpGetRequest(
                 `${apiUrl}/api/users`,
                 (response) => {
                     const data = response.data as UserListResponseBody;
