@@ -8,6 +8,7 @@ import {Button, Col, Container, Row, Table} from "react-bootstrap";
 import PageSizeSelection from "../../fragment/PageSizeSelection";
 import PageDisplay from "../../fragment/PageDisplay";
 import {PurchaseResponseBody} from "../../../network/apispec/purchase/purchaseSpec";
+import {Link} from "react-router-dom";
 
 export default function PurchaseList() {
     const [queryParameters, setQueryParameters] = useSearchParams();
@@ -138,7 +139,9 @@ function PurchaseItem({purchase}: {purchase: PurchaseResponseBody}) {
     );
     return (
         <tr>
-            <td>{purchase.tranNo}</td>
+            <td>
+                <Link to={`${purchase.tranNo}`}>{purchase.tranNo}</Link>
+            </td>
             <td>{purchase.buyerId}</td>
             <td>{purchase.paymentOption.paymentName}</td>
             <td>{purchase.receiverPhone}</td>

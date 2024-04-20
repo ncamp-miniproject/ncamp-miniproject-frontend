@@ -1,6 +1,6 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import httpGetRequest from "../../../network/httpRequest";
+import httpRequest from "../../../network/httpRequest";
 import {useAppSelector} from "../../../store/hook";
 import {UserResponseBody} from "../../../network/apispec/user/userSpec";
 import {Button, Container, Table} from "react-bootstrap";
@@ -14,7 +14,7 @@ export default function UserInfo() {
 
     useEffect(() => {
         apiUrl &&
-            httpGetRequest(`${apiUrl}/api/users/${userId}`, (response) => {
+            httpRequest(`${apiUrl}/api/users/${userId}`, (response) => {
                 const userData = response.data as UserResponseBody;
                 console.log(userData);
                 setUserInfo(userData);

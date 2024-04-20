@@ -17,6 +17,7 @@ import UserList from "./component/page/user/UserList";
 import UserInfo from "./component/page/user/UserInfo";
 import ProductInfo from "./component/page/product/ProductInfo";
 import PurchaseList from "./component/page/purchase/PurchaseList";
+import PurchaseInfo from "./component/page/purchase/PurchaseInfo";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -47,6 +48,10 @@ function App() {
                     <Route path="/users/:userId" element={<UserInfo />} />
                     <Route path="/users" element={<UserList />} />
                     <Route path="/purchases" element={<PurchaseList />} />
+                    <Route
+                        path="/purchases/:tranNo"
+                        element={<PurchaseInfo />}
+                    />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>

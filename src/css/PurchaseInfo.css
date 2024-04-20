@@ -1,0 +1,11 @@
+img {
+    width: 256px;
+}
+
+.tran-prod-info {
+    margin-top: 24px;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
