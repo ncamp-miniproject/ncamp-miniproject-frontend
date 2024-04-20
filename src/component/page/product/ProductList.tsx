@@ -30,11 +30,7 @@ export default function ProductList() {
         pagesToDisplay: [],
         currentPage: 1
     });
-    const [selectedCategoryNo, setSelectedCategoryNo] = useState<
-        number | undefined
-    >(undefined);
     const [currentPage, setCurrentPage] = useState<number | undefined>();
-    const [pageSize, setPageSize] = useState<number | undefined>();
     const [searchKeyword, setSearchKeyword] = useState<string>("");
     const [priceLowerBound, setPriceLowerBound] = useState<number>(0);
     const [priceUpperBound, setPriceUpperBound] = useState<number>(0);
@@ -68,32 +64,7 @@ export default function ProductList() {
                 const responseEntity = response.data as CategoryResponseEntity;
                 setCategoryList(responseEntity.map((re) => re as Category));
             });
-    }, [apiUrl, selectedCategoryNo, pageSize, queryParameters]);
-
-    useEffect(() => {
-        if (pageSize) {
-            queryParameters.set("pageSize", pageSize.toString());
-            queryParameters.set("page", "1");
-            setQueryParameters(queryParameters);
-        }
-    }, [pageSize]);
-
-    useEffect(() => {
-        if (selectedCategoryNo) {
-            queryParameters.set("categoryNo", selectedCategoryNo.toString());
-        } else {
-            queryParameters.delete("categoryNo");
-        }
-        queryParameters.set("page", "1");
-        setQueryParameters(queryParameters);
-    }, [selectedCategoryNo]);
-
-    useEffect(() => {
-        if (currentPage) {
-            queryParameters.set("page", currentPage.toString());
-            setQueryParameters(queryParameters);
-        }
-    }, [currentPage]);
+    }, [apiUrl, queryParameters]);
 
     let searchConditionForm;
     if (!searchConditionRef || searchConditionRef.current?.value === "1") {
@@ -170,11 +141,7 @@ export default function ProductList() {
         <Container>
             <Row>
                 <Col md={3}>
-                    <CategoryList
-                        categories={categoryList}
-                        selectedCategoryNo={selectedCategoryNo}
-                        setSelectedCategoryNo={setSelectedCategoryNo}
-                    />
+                    <CategoryList categories={categoryList} />
                 </Col>
                 <Col md={9} style={productDisplayStyle}>
                     <h2>상품 목록 조회</h2>
@@ -204,11 +171,8 @@ export default function ProductList() {
                             justifyContent: "space-between"
                         }}
                     >
-                        <SortButtonGroup
-                            queryParameters={queryParameters}
-                            setQueryParameters={setQueryParameters}
-                        />
-                        <PageSizeSelection setPageSize={setPageSize} />
+                        <SortButtonGroup />
+                        <PageSizeSelection />
                     </div>
                     <PageDisplay
                         pagination={pagination}

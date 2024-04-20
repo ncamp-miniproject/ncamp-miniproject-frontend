@@ -1,5 +1,6 @@
 import {Pagination} from "react-bootstrap";
 import {PPagination} from "../../domain/pagination";
+import {useSearchParams} from "react-router-dom";
 
 export default function PageDisplay({
     pagination,
@@ -8,11 +9,18 @@ export default function PageDisplay({
     pagination: PPagination;
     setCurrentPage: React.Dispatch<React.SetStateAction<number | undefined>>;
 }) {
+    const [queryParameters, setQueryParameters] = useSearchParams();
     return (
         <Pagination>
             <Pagination.Prev
                 disabled={!pagination.previousPageSetAvailable}
-                onClick={() => setCurrentPage(pagination.previousPageSetEntry)}
+                onClick={() => {
+                    queryParameters.set(
+                        "page",
+                        pagination.previousPageSetEntry.toString()
+                    );
+                    setQueryParameters(queryParameters);
+                }}
             />
             {pagination.pagesToDisplay.map((page) => {
                 return (
@@ -20,7 +28,8 @@ export default function PageDisplay({
                         key={`page-${page}`}
                         active={page === pagination.currentPage}
                         onClick={() => {
-                            setCurrentPage(page);
+                            queryParameters.set("page", page.toString());
+                            setQueryParameters(queryParameters);
                         }}
                     >
                         {page}
@@ -29,7 +38,13 @@ export default function PageDisplay({
             })}
             <Pagination.Next
                 disabled={!pagination.nextPageSetAvailable}
-                onClick={() => setCurrentPage(pagination.nextPageSetEntry)}
+                onClick={() => {
+                    queryParameters.set(
+                        "page",
+                        pagination.nextPageSetEntry.toString()
+                    );
+                    setQueryParameters(queryParameters);
+                }}
             />
         </Pagination>
     );
