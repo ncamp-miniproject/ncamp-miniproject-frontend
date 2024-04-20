@@ -1,5 +1,5 @@
 import {ButtonGroup, Dropdown, DropdownButton} from "react-bootstrap";
-import {SetURLSearchParams, useSearchParams} from "react-router-dom";
+import {useSearchParams} from "react-router-dom";
 
 export function SortButtonGroup() {
     const [queryParameters, setQueryParameters] = useSearchParams();

@@ -2,13 +2,7 @@ import {Pagination} from "react-bootstrap";
 import {PPagination} from "../../domain/pagination";
 import {useSearchParams} from "react-router-dom";
 
-export default function PageDisplay({
-    pagination,
-    setCurrentPage
-}: {
-    pagination: PPagination;
-    setCurrentPage: React.Dispatch<React.SetStateAction<number | undefined>>;
-}) {
+export default function PageDisplay({pagination}: {pagination: PPagination}) {
     const [queryParameters, setQueryParameters] = useSearchParams();
     return (
         <Pagination>

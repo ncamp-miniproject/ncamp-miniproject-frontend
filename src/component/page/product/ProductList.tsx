@@ -30,7 +30,6 @@ export default function ProductList() {
         pagesToDisplay: [],
         currentPage: 1
     });
-    const [currentPage, setCurrentPage] = useState<number | undefined>();
     const [searchKeyword, setSearchKeyword] = useState<string>("");
     const [priceLowerBound, setPriceLowerBound] = useState<number>(0);
     const [priceUpperBound, setPriceUpperBound] = useState<number>(0);
@@ -174,10 +173,7 @@ export default function ProductList() {
                         <SortButtonGroup />
                         <PageSizeSelection />
                     </div>
-                    <PageDisplay
-                        pagination={pagination}
-                        setCurrentPage={setCurrentPage}
-                    />
+                    <PageDisplay pagination={pagination} />
                     <p>전체 {count}개 상품</p>
                     <ProductDisplay products={products} />
                 </Col>

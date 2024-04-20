@@ -1,18 +1,15 @@
 import {useEffect, useState} from "react";
 import {Col, Container, ListGroup, Row} from "react-bootstrap";
-import {
-    UserListRequestParam,
-    UserListResponseBody
-} from "../../../network/apispec/user/userListSpec";
+import {UserListResponseBody} from "../../../network/apispec/user/userListSpec";
 import httpRequest from "../../../network/httpRequest";
 import {useAppSelector} from "../../../store/hook";
 import {UserResponseBody} from "../../../network/apispec/user/userSpec";
-import {useNavigate} from "react-router-dom";
-import {ApiRequestOptions} from "../../../domain/ApiRequestOptions";
-import {SearchCondition} from "../../../network/apispec/SearchCondition";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import PageDisplay from "../../fragment/PageDisplay";
 
 export default function UserList() {
+    const [queryParameters, setQueryParameters] = useSearchParams();
+
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     const [responseData, setResponseData] = useState<UserListResponseBody>({
         count: 0,
@@ -27,15 +24,6 @@ export default function UserList() {
             pageSize: 3
         }
     });
-    const [apiRequestOptions, setApiRequestOptions] =
-        useState<ApiRequestOptions>({
-            pageSize: 3,
-            searchKeyword: ""
-        });
-    const [currentPage, setCurrentPage] = useState<number | undefined>(1);
-    const [searchCondition, setSearchCondition] = useState<SearchCondition>(
-        SearchCondition.BY_NAME
-    );
 
     const navigate = useNavigate();
 
@@ -47,17 +35,9 @@ export default function UserList() {
                     const data = response.data as UserListResponseBody;
                     setResponseData(data);
                 },
-                {
-                    page: currentPage,
-                    ...apiRequestOptions,
-                    searchCondition
-                } as UserListRequestParam
+                queryParameters
             );
-    }, [apiUrl, apiRequestOptions, currentPage]);
-
-    useEffect(() => {
-        setCurrentPage(1);
-    }, [apiRequestOptions]);
+    }, [apiUrl, queryParameters]);
 
     return (
         <Container>
@@ -77,10 +57,7 @@ export default function UserList() {
                     </ListGroup.Item>
                 ))}
             </ListGroup>
-            <PageDisplay
-                pagination={responseData.paginationInfo}
-                setCurrentPage={setCurrentPage}
-            />
+            <PageDisplay pagination={responseData.paginationInfo} />
         </Container>
     );
 }

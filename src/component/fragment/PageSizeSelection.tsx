@@ -1,5 +1,3 @@
-import {queryAllByAltText} from "@testing-library/react";
-import React from "react";
 import {Dropdown, DropdownButton} from "react-bootstrap";
 import {useSearchParams} from "react-router-dom";
 
