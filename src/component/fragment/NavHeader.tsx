@@ -58,7 +58,7 @@ function NavbarMenuForAdmin() {
     return (
         <>
             <Nav.Link href="/users">회원정보조회</Nav.Link>
-            <Nav.Link href="#">판매조회</Nav.Link>
+            <Nav.Link href="/purchases">판매조회</Nav.Link>
         </>
     );
 }
