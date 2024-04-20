@@ -32,7 +32,7 @@ export default function UserList() {
             pageSize: 3,
             searchKeyword: ""
         });
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState<number | undefined>(1);
     const [searchCondition, setSearchCondition] = useState<SearchCondition>(
         SearchCondition.BY_NAME
     );

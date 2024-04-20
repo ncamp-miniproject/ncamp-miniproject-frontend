@@ -6,7 +6,7 @@ export default function PageDisplay({
     setCurrentPage
 }: {
     pagination: PPagination;
-    setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+    setCurrentPage: React.Dispatch<React.SetStateAction<number | undefined>>;
 }) {
     return (
         <Pagination>

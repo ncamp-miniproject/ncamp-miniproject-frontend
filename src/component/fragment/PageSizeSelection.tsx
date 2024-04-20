@@ -6,7 +6,7 @@ const PAGE_SIZE_SET = [3, 6, 9, 12];
 export default function PageSizeSelection({
     setPageSize
 }: {
-    setPageSize: React.Dispatch<React.SetStateAction<number>>;
+    setPageSize: React.Dispatch<React.SetStateAction<number | undefined>>;
 }) {
     return (
         <DropdownButton id="pageSize" title="페이지 크기" variant="secondary">

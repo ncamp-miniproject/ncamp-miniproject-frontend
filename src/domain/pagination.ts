@@ -5,5 +5,5 @@ export type PPagination = {
     nextPageSetEntry: number;
     pagesToDisplay: number[];
     currentPage: number;
-    pageSize: number;
+    pageSize?: number;
 }
