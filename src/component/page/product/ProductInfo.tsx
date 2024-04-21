@@ -4,7 +4,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useAppSelector} from "../../../store/hook";
 import {useEffect, useState} from "react";
 import {ProductImage} from "../../../domain/product";
-import httpRequest from "../../../network/httpRequest";
+import httpRequest, {HttpMethod} from "../../../network/httpRequest";
 import {
     ProductInfoRequestParam,
     ProductInfoResponseBody
@@ -15,6 +15,8 @@ export default function ProductInfo() {
     const [product, setProduct] = useState<
         ProductInfoResponseBody | undefined
     >();
+    const [quantity, setQuantity] = useState<number>(1);
+
     const {prodNo} = useParams();
     const loginUser = useAppSelector((state) => state.loginUser.value);
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
@@ -60,30 +62,85 @@ export default function ProductInfo() {
                             )}
                         </Col>
                         <Col md={6}>
-                            <Row>
-                                <Col className="data-label" md={4}>
-                                    상품명
-                                </Col>
-                                <Col className="data-display" md={8}>
-                                    {product.prodName}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col className="data-label" md={4}>
-                                    가격
-                                </Col>
-                                <Col className="data-display" md={8}>
-                                    {product.price}
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col className="data-label" md={4}>
-                                    제조일자
-                                </Col>
-                                <Col className="data-display" md={8}>
-                                    {product.manuDate}
-                                </Col>
-                            </Row>
+                            <div className="product-info">
+                                <div className="product-summary">
+                                    <Row>
+                                        <Col className="data-label" md={4}>
+                                            상품명
+                                        </Col>
+                                        <Col className="data-display" md={8}>
+                                            {product.prodName}
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col className="data-label" md={4}>
+                                            가격
+                                        </Col>
+                                        <Col className="data-display" md={8}>
+                                            {product.price}
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col className="data-label" md={4}>
+                                            제조일자
+                                        </Col>
+                                        <Col className="data-display" md={8}>
+                                            {product.manuDate}
+                                        </Col>
+                                    </Row>
+                                </div>
+                                <div className="purchase">
+                                    <div>
+                                        <label>수량</label>
+                                        <input
+                                            type="number"
+                                            value={quantity}
+                                            onChange={(e) => {
+                                                const q = parseInt(
+                                                    e.target.value
+                                                );
+                                                if (q < 1) {
+                                                    setQuantity(1);
+                                                } else {
+                                                    setQuantity(q);
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => {
+                                            if (apiUrl && prodNo) {
+                                                console.log("here");
+                                                httpRequest(
+                                                    `${apiUrl}/api/cart`,
+                                                    (response) => {
+                                                        if (
+                                                            response &&
+                                                            response.headers
+                                                        ) {
+                                                            console.log(
+                                                                response
+                                                            );
+                                                        }
+                                                    },
+                                                    undefined,
+                                                    HttpMethod.POST,
+                                                    {
+                                                        prodNo,
+                                                        quantity
+                                                    },
+                                                    {
+                                                        withCredentials: true
+                                                    }
+                                                );
+                                            }
+                                        }}
+                                    >
+                                        장바구니
+                                    </Button>
+                                </div>
+                            </div>
                         </Col>
                     </Row>
                     <h3>상품 상세</h3>

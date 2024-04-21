@@ -66,7 +66,8 @@ function NavbarMenuForAdmin() {
 function NavbarMenuForUser() {
     return (
         <>
-            <Nav.Link href="#">구매이력조회</Nav.Link>
+            <Nav.Link href="/purchases">구매이력조회</Nav.Link>
+            <Nav.Link href="/cart">장바구니</Nav.Link>
         </>
     );
 }

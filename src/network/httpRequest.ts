@@ -13,10 +13,11 @@ export default function httpRequest(
     callback: (response: AxiosResponse<any, any>) => void,
     params: undefined | object = undefined,
     method: HttpMethod | undefined = HttpMethod.GET,
+    body: undefined | object = undefined,
     headers: undefined | object = undefined,
     token: undefined | string = undefined
 ) {
-    sendRequest(url, callback, params, method, headers, token);
+    sendRequest(url, callback, params, method, body, headers, token);
 }
 
 function sendRequest(
@@ -24,6 +25,7 @@ function sendRequest(
     callback: (response: AxiosResponse<any, any>) => void,
     params: undefined | object = undefined,
     method: HttpMethod | undefined = HttpMethod.GET,
+    body: undefined | object = undefined,
     headers: undefined | object = undefined,
     token: undefined | string = undefined
 ) {
@@ -31,6 +33,9 @@ function sendRequest(
     switch (method) {
         case HttpMethod.GET:
             axios.get(fullUrl, config(headers, token)).then(callback);
+            break;
+        case HttpMethod.POST:
+            axios.post(fullUrl, body, config(headers, token)).then(callback);
             break;
         case HttpMethod.PATCH:
             axios.patch(fullUrl, config(headers, token)).then(callback);
@@ -51,14 +56,12 @@ function getQueryParameter(params: undefined | any = undefined) {
 }
 
 function config(headers: undefined | object, token: undefined | string) {
-    if (token) {
+    if (headers && token) {
         headers = {
             ...headers,
             Authorization: `Bearer ${token}`
         };
     }
-    return {
-        headers,
-        token
-    };
+    console.log(headers);
+    return headers;
 }

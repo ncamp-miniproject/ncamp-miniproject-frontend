@@ -25,7 +25,7 @@ function App() {
     useEffect(() => {
         console.log("App.tsx");
 
-        dispatch(setLoginUser({userId: "user08", role: Role.ADMIN}));
+        dispatch(setLoginUser({userId: "user08", role: Role.USER}));
 
         axios.get("/metadata.json").then((response) => {
             const metadata = response.data as Metadata;
