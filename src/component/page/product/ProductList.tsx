@@ -7,7 +7,7 @@ import {
 } from "../../../network/apispec/product/productListSpec";
 import {Category, Product} from "../../../domain/product";
 import {PPagination} from "../../../domain/pagination";
-import httpRequest, {HttpMethod} from "../../../network/httpRequest";
+import httpRequest from "../../../network/httpRequest";
 import PageDisplay from "../../fragment/PageDisplay";
 import {useSearchParams} from "react-router-dom";
 import PageSizeSelection from "../../fragment/PageSizeSelection";
@@ -45,14 +45,12 @@ export default function ProductList() {
     console.log(params);
     useEffect(() => {
         apiUrl &&
-            httpRequest(
-                `${apiUrl}/api/products`,
-                (response) => {
+            httpRequest({
+                url: `${apiUrl}/api/products`,
+                callback: (response) => {
                     const responseEntity =
                         response.data as ProductListResponseEntity;
-
                     console.log(responseEntity);
-
                     setProducts(
                         responseEntity.products.map((prod) => {
                             return {...prod, manuDate: new Date(prod.manuDate)};
@@ -61,14 +59,17 @@ export default function ProductList() {
                     setCount(responseEntity.count);
                     setPagination(responseEntity.pagination);
                 },
-                params,
-                HttpMethod.GET
-            );
+                params
+            });
 
         apiUrl &&
-            httpRequest(`${apiUrl}/api/categories`, (response) => {
-                const responseEntity = response.data as CategoryResponseEntity;
-                setCategoryList(responseEntity.map((re) => re as Category));
+            httpRequest({
+                url: `${apiUrl}/api/categories`,
+                callback: (response) => {
+                    const responseEntity =
+                        response.data as CategoryResponseEntity;
+                    setCategoryList(responseEntity.map((re) => re as Category));
+                }
             });
     }, [apiUrl, queryParameters]);
 

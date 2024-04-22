@@ -26,16 +26,16 @@ export default function ProductInfo() {
         apiUrl &&
             prodNo &&
             loginUser &&
-            httpRequest(
-                `${apiUrl}/api/products/${prodNo}`,
-                (response) => {
+            httpRequest({
+                url: `${apiUrl}/api/products/${prodNo}`,
+                callback: (response) => {
                     const data = response.data as ProductInfoResponseBody;
                     setProduct(data);
                 },
-                {
+                params: {
                     userId: loginUser.userId
-                } as ProductInfoRequestParam
-            );
+                }
+            });
     }, [apiUrl]);
 
     const thumbnailImageName = product?.productImages.filter(
@@ -112,9 +112,9 @@ export default function ProductInfo() {
                                         onClick={() => {
                                             if (apiUrl && prodNo) {
                                                 console.log("here");
-                                                httpRequest(
-                                                    `${apiUrl}/api/cart`,
-                                                    (response) => {
+                                                httpRequest({
+                                                    url: `${apiUrl}/api/cart`,
+                                                    callback: (response) => {
                                                         if (
                                                             response &&
                                                             response.headers
@@ -124,16 +124,13 @@ export default function ProductInfo() {
                                                             );
                                                         }
                                                     },
-                                                    undefined,
-                                                    HttpMethod.POST,
-                                                    {
+                                                    method: HttpMethod.POST,
+                                                    body: {
                                                         prodNo,
                                                         quantity
                                                     },
-                                                    {
-                                                        withCredentials: true
-                                                    }
-                                                );
+                                                    withCredentials: true
+                                                });
                                             }
                                         }}
                                     >

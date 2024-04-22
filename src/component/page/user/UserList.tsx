@@ -29,14 +29,14 @@ export default function UserList() {
 
     useEffect(() => {
         apiUrl &&
-            httpRequest(
-                `${apiUrl}/api/users`,
-                (response) => {
+            httpRequest({
+                url: `${apiUrl}/api/users`,
+                callback: (response) => {
                     const data = response.data as UserListResponseBody;
                     setResponseData(data);
                 },
-                queryParameters
-            );
+                params: queryParameters
+            });
     }, [apiUrl, queryParameters]);
 
     return (

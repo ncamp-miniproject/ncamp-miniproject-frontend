@@ -16,8 +16,11 @@ export default function PurchaseInfo() {
 
     useEffect(() => {
         apiUrl &&
-            httpRequest(`${apiUrl}/api/purchases/${tranNo}`, (response) => {
-                setPurchaseInfo(response.data);
+            httpRequest({
+                url: `${apiUrl}/api/purchases/${tranNo}`,
+                callback: (response) => {
+                    setPurchaseInfo(response.data);
+                }
             });
     }, [apiUrl]);
 

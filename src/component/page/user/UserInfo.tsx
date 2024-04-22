@@ -14,10 +14,12 @@ export default function UserInfo() {
 
     useEffect(() => {
         apiUrl &&
-            httpRequest(`${apiUrl}/api/users/${userId}`, (response) => {
-                const userData = response.data as UserResponseBody;
-                console.log(userData);
-                setUserInfo(userData);
+            httpRequest({
+                url: `${apiUrl}/api/users/${userId}`,
+                callback: (response) => {
+                    const userData = response.data as UserResponseBody;
+                    setUserInfo(userData);
+                }
             });
     }, [apiUrl]);
 

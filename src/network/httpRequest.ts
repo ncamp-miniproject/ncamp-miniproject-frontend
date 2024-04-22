@@ -1,67 +1,82 @@
 import axios, {AxiosResponse} from "axios";
 
 export enum HttpMethod {
-    GET,
-    POST,
-    PUT,
-    PATCH,
-    DELETE
+    GET = "GET",
+    POST = "POST",
+    PUT = "PUT",
+    PATCH = "PATCH",
+    DELETE = "DELETE"
 }
 
-export default function httpRequest(
-    url: string,
-    callback: (response: AxiosResponse<any, any>) => void,
-    params: undefined | object = undefined,
-    method: HttpMethod | undefined = HttpMethod.GET,
-    body: undefined | object = undefined,
-    headers: undefined | object = undefined,
-    token: undefined | string = undefined
-) {
-    sendRequest(url, callback, params, method, body, headers, token);
+export type RequestConfig = {
+    url: string;
+    callback: (response: AxiosResponse<any, any>) => void;
+    params?: object;
+    method?: HttpMethod;
+    body?: object;
+    headers?: object;
+    bearerToken?: string;
+    withCredentials?: boolean;
+};
+
+export default function httpRequest({
+    url,
+    callback,
+    params,
+    method,
+    body,
+    headers,
+    bearerToken,
+    withCredentials
+}: RequestConfig) {
+    sendRequest(
+        url,
+        callback,
+        params,
+        method,
+        body,
+        headers,
+        bearerToken,
+        withCredentials
+    );
 }
 
 function sendRequest(
     url: string,
     callback: (response: AxiosResponse<any, any>) => void,
     params: undefined | object = undefined,
-    method: HttpMethod | undefined = HttpMethod.GET,
+    method: HttpMethod = HttpMethod.GET,
     body: undefined | object = undefined,
     headers: undefined | object = undefined,
-    token: undefined | string = undefined
+    token: undefined | string = undefined,
+    withCredentials = false
 ) {
-    const fullUrl = `${url}${getQueryParameter(params)}`;
-    switch (method) {
-        case HttpMethod.GET:
-            axios.get(fullUrl, config(headers, token)).then(callback);
-            break;
-        case HttpMethod.POST:
-            axios.post(fullUrl, body, config(headers, token)).then(callback);
-            break;
-        case HttpMethod.PATCH:
-            axios.patch(fullUrl, config(headers, token)).then(callback);
-            break;
-        default:
-            return;
-    }
-}
+    const configData = {url, withCredentials, method} as any;
 
-function getQueryParameter(params: undefined | any = undefined) {
     if (params) {
-        const query = Object.keys(params)
-            .map((param) => `${param}=${params[param]}`)
-            .join("&");
-        return query !== "" ? `?${query}` : "";
+        configData.params = params;
     }
-    return "";
-}
 
-function config(headers: undefined | object, token: undefined | string) {
-    if (headers && token) {
-        headers = {
-            ...headers,
-            Authorization: `Bearer ${token}`
-        };
+    if (headers) {
+        configData.headers = headers;
     }
-    console.log(headers);
-    return headers;
+
+    if (token) {
+        if (configData.headers) {
+            configData.headers = {
+                ...headers,
+                Authorization: `Bearer ${token}`
+            };
+        } else {
+            configData.headers = {
+                Authorization: `Bearer ${token}`
+            };
+        }
+    }
+
+    if (body) {
+        configData.data = body;
+    }
+
+    axios(configData).then(callback);
 }

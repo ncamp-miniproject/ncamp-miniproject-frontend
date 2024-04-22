@@ -53,16 +53,16 @@ export default function PurchaseList() {
                     return;
             }
 
-            httpRequest(
-                requestUrl,
-                (response) => {
-                    const purchasesData =
+            httpRequest({
+                url: requestUrl,
+                callback: (response) => {
+                    const purchaseData =
                         response.data as PurchaseListResponseBody;
-                    console.log(purchasesData);
-                    setPurchaseList(purchasesData);
+                    console.log(purchaseData);
+                    setPurchaseList(purchaseData);
                 },
-                apiQueryParameters
-            );
+                params: apiQueryParameters
+            });
         }
     }, [apiUrl, loginUser, queryParameters]);
 
@@ -158,9 +158,9 @@ function PurchaseItem({purchase}: {purchase: PurchaseResponseBody}) {
                         onClick={() => {
                             apiUrl &&
                                 tranStatus &&
-                                httpRequest(
-                                    `${apiUrl}/api/purchases/${purchase.tranNo}/tran-code`,
-                                    (response) => {
+                                httpRequest({
+                                    url: `${apiUrl}/api/purchases/${purchase.tranNo}/tran-code`,
+                                    callback: (response) => {
                                         const data = response.data as {
                                             code: string;
                                             status: string;
@@ -168,13 +168,13 @@ function PurchaseItem({purchase}: {purchase: PurchaseResponseBody}) {
                                         console.log(data);
                                         setTranStatus(data);
                                     },
-                                    {
+                                    params: {
                                         tranCode: (
                                             parseInt(tranStatus.code) + 1
                                         ).toString()
                                     },
-                                    HttpMethod.PATCH
-                                );
+                                    method: HttpMethod.PATCH
+                                });
                         }}
                     >
                         {btnTitlePerTranStatus}
