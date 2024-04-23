@@ -4,13 +4,14 @@ import {useAppSelector} from "../../../store/hook";
 import {CartListResponseBody} from "../../../network/apispec/cart/cartSpec";
 import {Button, Col, Container, ListGroup, Row} from "react-bootstrap";
 import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
+import {useNavigate} from "react-router-dom";
 
 export default function CartList() {
-    const [cartData, setCartData] = useState<CartListResponseBody>({
-        itemCount: 0,
-        priceSum: 0,
-        productsInCart: []
-    });
+    const [productsInCart, setProductInCarts] = useState<
+        {product: ProductInfoResponseBody; quantity: number}[]
+    >([]);
+    const [itemCount, setItemCount] = useState(0);
+    const [priceSum, setPriceSum] = useState(0);
 
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
 
@@ -21,26 +22,53 @@ export default function CartList() {
                 callback: (response) => {
                     const data = response.data as CartListResponseBody;
                     console.log(data);
-                    setCartData(data);
+                    setProductInCarts(data.productsInCart);
+                    setItemCount(data.itemCount);
+                    setPriceSum(data.priceSum);
                 },
                 method: HttpMethod.GET,
                 withCredentials: true
             });
     }, [apiUrl]);
+
+    useEffect(() => {
+        let ic = 0;
+        let ps = 0;
+        for (const pc of productsInCart) {
+            ic += pc.quantity;
+            ps += pc.product.price * pc.quantity;
+        }
+        setItemCount(ic);
+        setPriceSum(ps);
+    }, [productsInCart]);
+
+    const navigate = useNavigate();
+
     return (
         <Container>
             <h2>장바구니</h2>
-            <p>총액: {cartData.priceSum}</p>
-            <p>총 수량: {cartData.itemCount}</p>
-            <Button variant="secondary" onClick={() => {}}>
+            <p>총액: {priceSum}</p>
+            <p>총 수량: {itemCount}</p>
+            <Button
+                variant="secondary"
+                onClick={() => {
+                    const queryParams = productsInCart
+                        .map((p) => `${p.product.prodNo}=${p.quantity}`)
+                        .join("&");
+
+                    navigate(`/purchases/purchase-form?${queryParams}`);
+                }}
+                disabled={itemCount === 0}
+            >
                 구매하기
             </Button>
             <ListGroup as="ul">
-                {cartData.productsInCart.map((p, idx) => (
+                {productsInCart.map((p, idx) => (
                     <ListGroup.Item key={`prod-${idx}`}>
                         <ProductItem
-                            product={p.product}
-                            quantity={p.quantity}
+                            productsInCart={productsInCart}
+                            setProductsInCart={setProductInCarts}
+                            index={idx}
                         />
                     </ListGroup.Item>
                 ))}
@@ -50,18 +78,30 @@ export default function CartList() {
 }
 
 function ProductItem({
-    product,
-    quantity
+    productsInCart,
+    setProductsInCart,
+    index
 }: {
-    product: ProductInfoResponseBody;
-    quantity: number;
+    productsInCart: {product: ProductInfoResponseBody; quantity: number}[];
+    setProductsInCart: React.Dispatch<
+        React.SetStateAction<
+            {
+                product: ProductInfoResponseBody;
+                quantity: number;
+            }[]
+        >
+    >;
+    index: number;
 }) {
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
+
+    const product = productsInCart[index].product;
+    const quantity = productsInCart[index].quantity;
 
     const thumbnailFiles = product.productImages?.filter((p) => p.thumbnail);
     const thumbnailFile =
         thumbnailFiles && thumbnailFiles.length > 0 && thumbnailFiles[0];
-    console.log(product);
+
     return (
         <Container>
             <Row>
@@ -79,7 +119,23 @@ function ProductItem({
                 <Col md={9}>
                     <h5>상품명: {product.prodName}</h5>
                     <p>가격: {product.price}</p>
-                    <p>수량: {quantity}</p>
+                    <p>
+                        수량:{" "}
+                        <input
+                            type="number"
+                            value={quantity}
+                            onChange={(e) => {
+                                if (parseInt(e.target.value) < 1) {
+                                    return;
+                                }
+                                productsInCart[index] = {
+                                    product,
+                                    quantity: parseInt(e.target.value)
+                                };
+                                setProductsInCart([...productsInCart]);
+                            }}
+                        />
+                    </p>
                 </Col>
             </Row>
         </Container>

@@ -19,6 +19,7 @@ import ProductInfo from "./component/page/product/ProductInfo";
 import PurchaseList from "./component/page/purchase/PurchaseList";
 import PurchaseInfo from "./component/page/purchase/PurchaseInfo";
 import CartList from "./component/page/cart/CartList";
+import PurchaseForm from "./component/page/purchase/PurchaseForm";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -48,6 +49,7 @@ function App() {
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/users/:userId" element={<UserInfo />} />
                     <Route path="/users" element={<UserList />} />
+                    <Route path="/purchases/purchase-form" element={<PurchaseForm />} />
                     <Route path="/purchases" element={<PurchaseList />} />
                     <Route
                         path="/purchases/:tranNo"
