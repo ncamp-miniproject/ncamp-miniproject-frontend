@@ -56,7 +56,14 @@ function App() {
                         element={<PurchaseForm />}
                     />
                     <Route path="/purchases" element={<PurchaseList />} />
-                    <Route path="/purchases/purchase-result/alert" element={<AlertPurchaseResult/>}/>
+                    <Route
+                        path="/purchases/:tranNo"
+                        element={<PurchaseInfo />}
+                    />
+                    <Route
+                        path="/purchases/purchase-result/alert"
+                        element={<AlertPurchaseResult />}
+                    />
                     <Route
                         path="/external/daum-address"
                         element={<DaumAddressWindow />}
