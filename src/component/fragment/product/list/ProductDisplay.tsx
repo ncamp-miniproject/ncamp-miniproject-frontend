@@ -1,8 +1,10 @@
 import {Col, Container, Row} from "react-bootstrap";
 import {Product} from "../../../../domain/product";
-import {ProductItem} from "./ProductItemDisplay";
+import ProductItem from "./ProductItem";
+import {useNavigate} from "react-router-dom";
 
 export function ProductDisplay({products}: {products: Product[]}) {
+    const navigate = useNavigate();
     return (
         <Container>
             <Row>
@@ -20,7 +22,11 @@ export function ProductDisplay({products}: {products: Product[]}) {
                         },
                         idx
                     ) => (
-                        <Col md={4} key={`col-${idx}`}>
+                        <Col
+                            md={4}
+                            key={`col-${idx}`}
+                            onClick={() => navigate(`/products/${prodNo}`)}
+                        >
                             <ProductItem
                                 key={`prod-item-${idx}`}
                                 prodNo={prodNo}

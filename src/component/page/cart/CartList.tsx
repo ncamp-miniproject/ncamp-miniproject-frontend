@@ -62,6 +62,28 @@ export default function CartList() {
             >
                 구매하기
             </Button>
+            <Button
+                variant="danger"
+                onClick={() => {
+                    if (apiUrl) {
+                        httpRequest({
+                            url: "/api/cart",
+                            baseUrl: apiUrl,
+                            callback: (response) => {
+                                if (response.status === 204) {
+                                    setProductInCarts([]);
+                                    setItemCount(0);
+                                    setPriceSum(0);
+                                }
+                            },
+                            method: HttpMethod.DELETE,
+                            withCredentials: true
+                        });
+                    }
+                }}
+            >
+                초기화
+            </Button>
             <ListGroup as="ul">
                 {productsInCart.map((p, idx) => (
                     <ListGroup.Item key={`prod-${idx}`}>

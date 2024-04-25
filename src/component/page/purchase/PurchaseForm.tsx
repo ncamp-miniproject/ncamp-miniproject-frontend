@@ -6,10 +6,9 @@ import httpRequest, {HttpMethod} from "../../../network/httpRequest";
 import {Button, Col, Container, Form, Row} from "react-bootstrap";
 import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
 import {CartListResponseBody} from "../../../network/apispec/cart/cartSpec";
-import DaumPostcode from "react-daum-postcode";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.module.css";
-import {ProductItem} from "../../fragment/product/list/ProductItemDisplay";
+import ProductItem from "../../fragment/product/list/ProductItem";
 import {AddPurchaseRequestBody} from "../../../network/apispec/purchase/addPurchaseSpec";
 
 export default function PurchaseForm() {
@@ -31,7 +30,6 @@ export default function PurchaseForm() {
         [string, string, string]
     >(["010", "", ""]);
     const [receiverPostCode, setReceiverPostCode] = useState<string>();
-    // const [receiverAddr, setReceiverAddr] = useState<string>();
     const receiverAddrRef = useRef<HTMLInputElement>(null);
     const receiverDetailAddr = useRef<HTMLInputElement>(null);
     const divyRequestRef = useRef<HTMLInputElement>(null);
@@ -270,7 +268,9 @@ export default function PurchaseForm() {
                                 url: "/api/purchases",
                                 callback: (response) => {
                                     if (response.status === 201) {
-                                        navigate("/purchases/purchase-result");
+                                        navigate(
+                                            "/purchases/purchase-result/alert"
+                                        );
                                     } else {
                                         // TODO
                                         alert("구매에 실패했습니다.");
@@ -305,7 +305,7 @@ export default function PurchaseForm() {
                                             };
                                         }
                                     )
-                                }
+                                } as AddPurchaseRequestBody
                             });
                         }
                     }}

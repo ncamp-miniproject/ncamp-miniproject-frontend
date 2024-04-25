@@ -5,10 +5,7 @@ import {useAppSelector} from "../../../store/hook";
 import {useEffect, useState} from "react";
 import {ProductImage} from "../../../domain/product";
 import httpRequest, {HttpMethod} from "../../../network/httpRequest";
-import {
-    ProductInfoRequestParam,
-    ProductInfoResponseBody
-} from "../../../network/apispec/product/productSpec";
+import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
 import * as Icon from "react-bootstrap-icons";
 
 export default function ProductInfo() {
@@ -116,11 +113,13 @@ export default function ProductInfo() {
                                                     url: `${apiUrl}/api/cart`,
                                                     callback: (response) => {
                                                         if (
-                                                            response &&
-                                                            response.headers
+                                                            Math.round(
+                                                                response.status /
+                                                                    100
+                                                            ) === 2
                                                         ) {
-                                                            console.log(
-                                                                response
+                                                            alert(
+                                                                "장바구니에 추가됐습니다."
                                                             );
                                                         }
                                                     },

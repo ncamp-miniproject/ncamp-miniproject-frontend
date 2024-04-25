@@ -1,9 +1,8 @@
 import {Card} from "react-bootstrap";
 import {useAppSelector} from "../../../../store/hook";
 import {Category} from "../../../../domain/product";
-import {useNavigate} from "react-router-dom";
 
-type ProductItemDisplay = {
+type ProductItemData = {
     prodNo: number;
     prodName: string;
     prodDetail: string;
@@ -12,20 +11,19 @@ type ProductItemDisplay = {
     imageFileName: string;
 };
 
-export function ProductItem({
+export default function ProductItem({
     prodNo,
     prodName,
     prodDetail,
     price,
     category,
     imageFileName
-}: ProductItemDisplay) {
-    const navigate = useNavigate();
+}: ProductItemData) {
     const trimmedProdDetail =
         prodDetail.length > 15 ? prodDetail.substring(0, 15) : "";
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     return (
-        <Card onClick={() => navigate(`/products/${prodNo}`)}>
+        <Card>
             <Card.Header>{prodNo}</Card.Header>
             <Card.Img
                 variant="top"
