@@ -20,6 +20,8 @@ import PurchaseList from "./component/page/purchase/PurchaseList";
 import PurchaseInfo from "./component/page/purchase/PurchaseInfo";
 import CartList from "./component/page/cart/CartList";
 import PurchaseForm from "./component/page/purchase/PurchaseForm";
+import DaumAddressWindow from "./component/fragment/DaumAddressWindow";
+import AlertPurchaseResult from "./component/page/purchase/AlertPurchaseResult";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -49,12 +51,17 @@ function App() {
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/users/:userId" element={<UserInfo />} />
                     <Route path="/users" element={<UserList />} />
-                    <Route path="/purchases/purchase-form" element={<PurchaseForm />} />
-                    <Route path="/purchases" element={<PurchaseList />} />
                     <Route
-                        path="/purchases/:tranNo"
-                        element={<PurchaseInfo />}
+                        path="/purchases/purchase-form"
+                        element={<PurchaseForm />}
                     />
+                    <Route path="/purchases" element={<PurchaseList />} />
+                    <Route path="/purchases/purchase-result" element={<AlertPurchaseResult/>}/>
+                    <Route
+                        path="/external/daum-address"
+                        element={<DaumAddressWindow />}
+                    />
+
                     <Route path="/cart" element={<CartList />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>

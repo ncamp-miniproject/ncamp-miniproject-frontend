@@ -25,7 +25,7 @@ export function ProductItem({
         prodDetail.length > 15 ? prodDetail.substring(0, 15) : "";
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     return (
-        <Card onClick={() => navigate(`${prodNo}`)}>
+        <Card onClick={() => navigate(`/products/${prodNo}`)}>
             <Card.Header>{prodNo}</Card.Header>
             <Card.Img
                 variant="top"
