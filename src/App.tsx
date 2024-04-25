@@ -22,6 +22,7 @@ import CartList from "./component/page/cart/CartList";
 import PurchaseForm from "./component/page/purchase/PurchaseForm";
 import DaumAddressWindow from "./component/fragment/DaumAddressWindow";
 import AlertPurchaseResult from "./component/page/purchase/AlertPurchaseResult";
+import ProductRegister from "./component/page/product/ProductRegister";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -29,7 +30,7 @@ function App() {
     useEffect(() => {
         console.log("App.tsx");
 
-        dispatch(setLoginUser({userId: "user08", role: Role.USER}));
+        dispatch(setLoginUser({userId: "seller1", role: Role.SELLER}));
 
         axios.get("/metadata.json").then((response) => {
             const metadata = response.data as Metadata;
@@ -47,6 +48,10 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/sign-in" element={<SignIn />} />
                     <Route path="/sign-up" element={<SignUp />} />
+                    <Route
+                        path="/products/register/form"
+                        element={<ProductRegister />}
+                    />
                     <Route path="/products/:prodNo" element={<ProductInfo />} />
                     <Route path="/products" element={<ProductList />} />
                     <Route path="/users/:userId" element={<UserInfo />} />

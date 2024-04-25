@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import {configureStore} from "@reduxjs/toolkit";
 import loginUser from "./slice/loginUser";
 import accessToken from "./slice/accessToken";
 import metadata from "./slice/metadata";
