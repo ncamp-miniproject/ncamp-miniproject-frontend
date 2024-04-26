@@ -85,6 +85,27 @@ export default function ProductInfo() {
                                             {product.manuDate}
                                         </Col>
                                     </Row>
+                                    <Row>
+                                        <Col className="data-label" md={4}>
+                                            판매자
+                                        </Col>
+                                        <Col className="data-display" md={8}>
+                                            {product.seller ? (
+                                                <a
+                                                    href="#"
+                                                    onClick={() => {
+                                                        navigate(
+                                                            `/sale/${product.seller}`
+                                                        );
+                                                    }}
+                                                >
+                                                    {product.seller}
+                                                </a>
+                                            ) : (
+                                                ""
+                                            )}
+                                        </Col>
+                                    </Row>
                                 </div>
                                 <div className="purchase">
                                     <div>

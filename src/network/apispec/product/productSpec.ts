@@ -6,6 +6,7 @@ export type ProductInfoRequestParam = {
 
 export type ProductInfoResponseBody = {
     prodNo: number;
+    seller: string;
     prodName: string;
     prodDetail: string;
     price: number;

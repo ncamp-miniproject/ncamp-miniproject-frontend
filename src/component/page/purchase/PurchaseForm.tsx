@@ -243,6 +243,7 @@ export default function PurchaseForm() {
                         <div>
                             <ProductItem
                                 key={`prod-${product.prodNo}`}
+                                seller={product.seller}
                                 prodNo={product.prodNo}
                                 prodName={product.prodName}
                                 prodDetail={product.prodDetail}

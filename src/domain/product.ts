@@ -5,6 +5,7 @@ export type Category = {
 
 export type Product = {
     prodNo: number;
+    seller: string;
     prodName: string;
     prodDetail: string;
     price: number;

@@ -12,6 +12,7 @@ export function ProductDisplay({products}: {products: Product[]}) {
                     (
                         {
                             prodNo,
+                            seller,
                             prodName,
                             prodDetail,
                             price,
@@ -30,6 +31,7 @@ export function ProductDisplay({products}: {products: Product[]}) {
                             <ProductItem
                                 key={`prod-item-${idx}`}
                                 prodNo={prodNo}
+                                seller={seller}
                                 prodName={prodName}
                                 prodDetail={prodDetail}
                                 price={price}

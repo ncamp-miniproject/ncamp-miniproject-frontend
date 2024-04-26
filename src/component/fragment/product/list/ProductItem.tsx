@@ -4,6 +4,7 @@ import {Category} from "../../../../domain/product";
 
 type ProductItemData = {
     prodNo: number;
+    seller: string;
     prodName: string;
     prodDetail: string;
     price: number;
@@ -13,6 +14,7 @@ type ProductItemData = {
 
 export default function ProductItem({
     prodNo,
+    seller,
     prodName,
     prodDetail,
     price,
@@ -40,6 +42,7 @@ export default function ProductItem({
                     {trimmedProdDetail}
                     {prodDetail.length > 15 ? "..." : ""}
                 </Card.Text>
+                <Card.Text>판매자: {seller}</Card.Text>
                 <Card.Text>
                     {category ? category.categoryName : "카테고리 없음"}
                 </Card.Text>
