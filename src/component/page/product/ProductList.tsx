@@ -54,7 +54,11 @@ export default function ProductList({menu}: {menu?: string}) {
                 loginUser &&
                 loginUser.role === Role.SELLER
             ) {
-                params.seller = loginUser.userId;
+                if (!queryParameters.has("seller")) {
+                    queryParameters.set("seller", loginUser.userId);
+                    setQueryParameters(queryParameters);
+                    return;
+                }
             }
 
             httpRequest({

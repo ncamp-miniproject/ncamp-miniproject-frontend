@@ -23,6 +23,7 @@ import PurchaseForm from "./component/page/purchase/PurchaseForm";
 import DaumAddressWindow from "./component/fragment/DaumAddressWindow";
 import AlertPurchaseResult from "./component/page/purchase/AlertPurchaseResult";
 import ProductRegister from "./component/page/product/ProductRegister";
+import SaleList from "./component/page/product/SaleList";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -54,6 +55,7 @@ function App() {
                     />
                     <Route path="/products/:prodNo" element={<ProductInfo />} />
                     <Route path="/products" element={<ProductList />} />
+                    <Route path="/sale/:seller" element={<SaleList />} />
                     <Route path="/users/:userId" element={<UserInfo />} />
                     <Route path="/users" element={<UserList />} />
                     <Route
