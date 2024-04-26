@@ -231,7 +231,7 @@ export default function ProductRegister() {
                             }
                             if (apiUrl) {
                                 const body = {
-                                    register: loginUser!.userId,
+                                    seller: loginUser!.userId,
                                     prodName,
                                     prodDetail,
                                     price,

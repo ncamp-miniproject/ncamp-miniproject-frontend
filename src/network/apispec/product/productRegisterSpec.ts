@@ -6,7 +6,7 @@ export type ProductImageDto = {
 };
 
 export type ProductRegisterRequestBody = {
-    register: string;
+    seller: string;
     prodName: string;
     prodDetail: string;
     price: number;

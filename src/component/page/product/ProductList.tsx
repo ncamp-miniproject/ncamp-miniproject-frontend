@@ -15,8 +15,9 @@ import {SearchCondition} from "../../../network/apispec/SearchCondition";
 import {SortButtonGroup} from "../../fragment/product/list/SortButtonGroup";
 import {CategoryList} from "../../fragment/product/list/CategoryList";
 import {ProductDisplay} from "../../fragment/product/list/ProductDisplay";
+import {Role} from "../../../domain/user";
 
-export default function ProductList() {
+export default function ProductList({menu}: {menu?: string}) {
     const [queryParameters, setQueryParameters] = useSearchParams();
 
     const [categoryList, setCategoryList] = useState<Category[]>([]);
@@ -36,15 +37,26 @@ export default function ProductList() {
 
     const searchConditionRef = useRef<HTMLSelectElement>(null);
 
+    const loginUser = useAppSelector((state) => state.loginUser.value);
+
     const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
 
     const params = {} as any;
     queryParameters.forEach((v, k) => {
         params[k] = v;
     });
-    console.log(params);
+
     useEffect(() => {
-        apiUrl &&
+        if (apiUrl) {
+            if (
+                queryParameters.has("menu") &&
+                queryParameters.get("menu") === "manage" &&
+                loginUser &&
+                loginUser.role === Role.SELLER
+            ) {
+                params.seller = loginUser.userId;
+            }
+
             httpRequest({
                 url: `${apiUrl}/api/products`,
                 callback: (response) => {
@@ -62,7 +74,6 @@ export default function ProductList() {
                 params
             });
 
-        apiUrl &&
             httpRequest({
                 url: `${apiUrl}/api/categories`,
                 callback: (response) => {
@@ -71,6 +82,7 @@ export default function ProductList() {
                     setCategoryList(responseEntity.map((re) => re as Category));
                 }
             });
+        }
     }, [apiUrl, queryParameters]);
 
     let searchConditionForm;

@@ -78,7 +78,7 @@ function NavbarMenuForSeller() {
     return (
         <>
             <Nav.Link href="/products/register/form">판매상품등록</Nav.Link>
-            <Nav.Link href="#">판매상품관리</Nav.Link>
+            <Nav.Link href="/products?menu=manage">판매상품관리</Nav.Link>
         </>
     );
 }
