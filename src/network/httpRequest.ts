@@ -1,4 +1,5 @@
 import axios, {AxiosResponse} from "axios";
+import {ACCESS_TOKEN, REFRESH_TOKEN} from "../common/constants";
 
 export enum HttpMethod {
     GET = "GET",
@@ -16,7 +17,6 @@ export type RequestConfig = {
     method?: HttpMethod;
     body?: object;
     headers?: object;
-    bearerToken?: string;
     withCredentials?: boolean;
 };
 
@@ -28,7 +28,6 @@ export default function httpRequest({
     method,
     body,
     headers,
-    bearerToken,
     withCredentials
 }: RequestConfig) {
     sendRequest(
@@ -39,7 +38,6 @@ export default function httpRequest({
         method,
         body,
         headers,
-        bearerToken,
         withCredentials
     );
 }
@@ -52,7 +50,6 @@ function sendRequest(
     method: HttpMethod = HttpMethod.GET,
     body: undefined | object = undefined,
     headers: undefined | object = undefined,
-    token: undefined | string = undefined,
     withCredentials = false
 ) {
     const configData = {url, withCredentials, method} as any;
@@ -65,15 +62,17 @@ function sendRequest(
         configData.headers = headers;
     }
 
-    if (token) {
+    const accessToken = localStorage.getItem(ACCESS_TOKEN);
+
+    if (accessToken) {
         if (configData.headers) {
             configData.headers = {
                 ...headers,
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             };
         } else {
             configData.headers = {
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${accessToken}`
             };
         }
     }
@@ -86,6 +85,41 @@ function sendRequest(
         configData.baseURL = baseUrl;
     }
 
-    console.log(configData);
-    axios(configData).then(callback);
+    axios(configData)
+        .then((response) => {
+            const newAccessToken = response.headers["New-Access-Token"];
+            localStorage.setItem(ACCESS_TOKEN, newAccessToken);
+            callback(response);
+        })
+        .catch((error) => {
+            console.error(error);
+            const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+
+            if (refreshToken) {
+                if (configData.headers) {
+                    configData.headers = {
+                        ...headers,
+                        Authorization: `Bearer ${refreshToken}`
+                    };
+                } else {
+                    configData.headers = {
+                        Authorization: `Bearer ${refreshToken}`
+                    };
+                }
+            }
+            axios(configData)
+                .then((response) => {
+                    const newAccessToken = response.headers["New-Access-Token"];
+                    const newRefreshToken =
+                        response.headers["New-Refresh-Token"];
+                    localStorage.setItem(ACCESS_TOKEN, newAccessToken);
+                    localStorage.setItem(REFRESH_TOKEN, newRefreshToken);
+                    callback(response);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    // window.location.href = "/sign-in";
+                    alert("Error");
+                });
+        });
 }

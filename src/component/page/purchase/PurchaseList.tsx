@@ -44,7 +44,7 @@ export default function PurchaseList() {
                     apiQueryParameters.buyerId = loginUser.userId;
                     break;
                 case Role.ADMIN:
-                    requestUrl = `${apiUrl}/api/purchases/sale`;
+                    requestUrl = `${apiUrl}/api/purchases/sale/list`;
                     break;
                 default:
                     console.error(

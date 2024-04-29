@@ -4,7 +4,7 @@ export type LoginUser = {
 };
 
 export enum Role {
-    USER = "user",
-    SELLER = "seller",
-    ADMIN = "admin"
+    USER = "USER",
+    SELLER = "SELLER",
+    ADMIN = "ADMIN"
 };

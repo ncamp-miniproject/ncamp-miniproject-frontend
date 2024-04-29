@@ -54,6 +54,7 @@ export default function ProductList({menu}: {menu?: string}) {
                 loginUser &&
                 loginUser.role === Role.SELLER
             ) {
+                console.log("here");
                 if (!queryParameters.has("seller")) {
                     queryParameters.set("seller", loginUser.userId);
                     setQueryParameters(queryParameters);
@@ -87,7 +88,7 @@ export default function ProductList({menu}: {menu?: string}) {
                 }
             });
         }
-    }, [apiUrl, queryParameters]);
+    }, [apiUrl, queryParameters, loginUser]);
 
     let searchConditionForm;
     if (!searchConditionRef || searchConditionRef.current?.value === "1") {

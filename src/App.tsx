@@ -9,7 +9,7 @@ import {useEffect} from "react";
 import axios from "axios";
 import SignUp from "./component/page/SignUp";
 import {Metadata, setMetadata} from "./store/slice/metadata";
-import {useAppDispatch} from "./store/hook";
+import {useAppDispatch, useAppSelector} from "./store/hook";
 import ProductList from "./component/page/product/ProductList";
 import {setLoginUser} from "./store/slice/loginUser";
 import {Role} from "./domain/user";
@@ -24,14 +24,19 @@ import DaumAddressWindow from "./component/fragment/DaumAddressWindow";
 import AlertPurchaseResult from "./component/page/purchase/AlertPurchaseResult";
 import ProductRegister from "./component/page/product/ProductRegister";
 import SaleList from "./component/page/product/SaleList";
+import {ACCESS_TOKEN, REFRESH_TOKEN} from "./common/constants";
 
 function App() {
     const dispatch = useAppDispatch();
 
+    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
+
     useEffect(() => {
         console.log("App.tsx");
+        console.log(localStorage.getItem(ACCESS_TOKEN));
+        console.log(localStorage.getItem(REFRESH_TOKEN));
 
-        dispatch(setLoginUser({userId: "seller1", role: Role.SELLER}));
+        // dispatch(setLoginUser({userId: "seller1", role: Role.SELLER}));
 
         axios.get("/metadata.json").then((response) => {
             const metadata = response.data as Metadata;
@@ -40,6 +45,42 @@ function App() {
 
         // TODO: authenticate by sending request to the back-end server
     }, []);
+
+    useEffect(() => {
+        if (apiUrl) {
+            const refreshToken = localStorage.getItem(REFRESH_TOKEN);
+            if (refreshToken) {
+                console.log(apiUrl);
+                axios
+                    .post(`${apiUrl}/api/auth/token/${refreshToken}`)
+                    .then((response) => {
+                        const data = response.data as {
+                            userId: string;
+                            role: Role;
+                            newAccessToken: string;
+                            newRefreshToken: string;
+                        };
+                        localStorage.setItem(ACCESS_TOKEN, data.newAccessToken);
+                        localStorage.setItem(
+                            REFRESH_TOKEN,
+                            data.newRefreshToken
+                        );
+                        dispatch(
+                            setLoginUser({
+                                userId: data.userId,
+                                role: data.role
+                            })
+                        );
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        dispatch(setLoginUser(null));
+                    });
+            } else {
+                dispatch(setLoginUser(null));
+            }
+        }
+    }, [apiUrl]);
 
     return (
         <>

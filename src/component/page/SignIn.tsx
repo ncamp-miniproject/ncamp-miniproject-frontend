@@ -2,10 +2,13 @@ import {useEffect, useRef} from "react";
 import {Button, Form} from "react-bootstrap";
 import {SignInRequestBody} from "../../network/apispec/user/signInSpec";
 import {UserResponseBody} from "../../network/apispec/user/userSpec";
-import {useAppDispatch} from "../../store/hook";
+import {useAppDispatch, useAppSelector} from "../../store/hook";
 import {setLoginUser} from "../../store/slice/loginUser";
 import {useNavigate} from "react-router-dom";
 import $ from "jquery";
+import axios from "axios";
+import {ACCESS_TOKEN, REFRESH_TOKEN} from "../../common/constants";
+import {Role} from "../../domain/user";
 
 function SignIn() {
     const navigate = useNavigate();
@@ -15,6 +18,8 @@ function SignIn() {
     const signInButtonRef = useRef<HTMLButtonElement>(null);
 
     const dispatch = useAppDispatch();
+
+    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
 
     async function doSigningIn(
         userId: string | undefined,
@@ -26,17 +31,31 @@ function SignIn() {
             return;
         }
 
-        const success = await sendSignInRequest({userId, password});
-
-        if (success) {
-            const userInfo = await getUserInfoFromServer(userId);
-            dispatch(
-                setLoginUser({
-                    userId: userInfo.userId
-                    // TODO: I should decide whether put more information here
+        if (apiUrl) {
+            axios
+                .post(`${apiUrl}/api/auth`, {userId, password})
+                .then((response) => {
+                    const data = response.data as {
+                        accessToken: string;
+                        refreshToken: string;
+                        userId: string;
+                        role: Role;
+                    };
+                    localStorage.setItem(ACCESS_TOKEN, data.accessToken);
+                    localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
+                    dispatch(
+                        setLoginUser({
+                            userId: data.userId,
+                            role: data.role
+                        })
+                    );
+                    navigate("/");
                 })
-            );
-            navigate("/");
+                .catch((error) => {
+                    console.error(error);
+                    alert("로그인 실패");
+                    navigate("/");
+                });
         }
     }
 
@@ -88,7 +107,7 @@ function SignIn() {
                 variant="primary"
                 type="button"
                 onClick={() =>
-                    doSigningIn(idRef.current?.value, idRef.current?.value)
+                    doSigningIn(idRef.current?.value, pwRef.current?.value)
                 }
                 ref={signInButtonRef}
             >
@@ -96,29 +115,6 @@ function SignIn() {
             </Button>
         </Form>
     );
-}
-
-async function sendSignInRequest(requestData: SignInRequestBody) {
-    // TODO: ajax to back-end server for signing in
-    const dummyData = true;
-
-    const result = dummyData;
-    return result;
-}
-
-async function getUserInfoFromServer(userId: string) {
-    // TODO: ajax to back-end server for user info
-
-    const dummyData: UserResponseBody = {
-        userId: "dummyId",
-        nameOfUser: "dummyName",
-        role: "user",
-        email: "dummy@sample.com",
-        regDate: "2017-03-24"
-    };
-
-    const result = dummyData;
-    return result;
 }
 
 export default SignIn;
