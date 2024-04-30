@@ -25,6 +25,7 @@ import AlertPurchaseResult from "./component/page/purchase/AlertPurchaseResult";
 import ProductRegister from "./component/page/product/ProductRegister";
 import SaleList from "./component/page/product/SaleList";
 import {ACCESS_TOKEN, REFRESH_TOKEN} from "./common/constants";
+import httpRequest from "./network/httpRequest";
 
 function App() {
     const dispatch = useAppDispatch();
@@ -48,37 +49,30 @@ function App() {
 
     useEffect(() => {
         if (apiUrl) {
-            const refreshToken = localStorage.getItem(REFRESH_TOKEN);
-            if (refreshToken) {
-                console.log(apiUrl);
-                axios
-                    .post(`${apiUrl}/api/auth/token/${refreshToken}`)
-                    .then((response) => {
-                        const data = response.data as {
-                            userId: string;
-                            role: Role;
-                            newAccessToken: string;
-                            newRefreshToken: string;
-                        };
-                        localStorage.setItem(ACCESS_TOKEN, data.newAccessToken);
-                        localStorage.setItem(
-                            REFRESH_TOKEN,
-                            data.newRefreshToken
-                        );
-                        dispatch(
-                            setLoginUser({
-                                userId: data.userId,
-                                role: data.role
-                            })
-                        );
-                    })
-                    .catch((error) => {
-                        console.log(error);
-                        dispatch(setLoginUser(null));
-                    });
-            } else {
-                dispatch(setLoginUser(null));
-            }
+            const accessToken = localStorage.getItem(ACCESS_TOKEN);
+            httpRequest({
+                url: "/api/users/self/token",
+                callback: (response) => {
+                    const data = response.data as {
+                        userId: string;
+                        role: Role;
+                    };
+                    dispatch(
+                        setLoginUser({
+                            userId: data.userId,
+                            role: data.role
+                        })
+                    );
+                },
+                params: {
+                    token: accessToken ? accessToken : ""
+                },
+                baseUrl: apiUrl,
+                errorCallback: (error) => {
+                    console.error(error);
+                    dispatch(setLoginUser(null));
+                }
+            });
         }
     }, [apiUrl]);
 

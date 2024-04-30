@@ -18,6 +18,7 @@ export type RequestConfig = {
     body?: object;
     headers?: object;
     withCredentials?: boolean;
+    errorCallback?: (error: any) => void;
 };
 
 export default function httpRequest({
@@ -28,7 +29,8 @@ export default function httpRequest({
     method,
     body,
     headers,
-    withCredentials
+    withCredentials,
+    errorCallback
 }: RequestConfig) {
     sendRequest(
         url,
@@ -38,7 +40,8 @@ export default function httpRequest({
         method,
         body,
         headers,
-        withCredentials
+        withCredentials,
+        errorCallback
     );
 }
 
@@ -50,7 +53,8 @@ function sendRequest(
     method: HttpMethod = HttpMethod.GET,
     body: undefined | object = undefined,
     headers: undefined | object = undefined,
-    withCredentials = false
+    withCredentials = true,
+    errorCallback: (error: any) => void = () => {}
 ) {
     const configData = {url, withCredentials, method} as any;
 
@@ -64,19 +68,6 @@ function sendRequest(
 
     const accessToken = localStorage.getItem(ACCESS_TOKEN);
 
-    if (accessToken) {
-        if (configData.headers) {
-            configData.headers = {
-                ...headers,
-                Authorization: `Bearer ${accessToken}`
-            };
-        } else {
-            configData.headers = {
-                Authorization: `Bearer ${accessToken}`
-            };
-        }
-    }
-
     if (body) {
         configData.data = body;
     }
@@ -85,41 +76,68 @@ function sendRequest(
         configData.baseURL = baseUrl;
     }
 
-    axios(configData)
+    const newConfigData = {...configData};
+    if (configData.headers) {
+        newConfigData.headers = {
+            ...configData.headers,
+            Authorization: accessToken ? `Bearer ${accessToken}` : "Bearer -"
+        };
+    } else {
+        newConfigData.headers = {
+            Authorization: accessToken ? `Bearer ${accessToken}` : "Bearer -"
+        };
+    }
+
+    axios(newConfigData)
         .then((response) => {
-            const newAccessToken = response.headers["New-Access-Token"];
-            localStorage.setItem(ACCESS_TOKEN, newAccessToken);
             callback(response);
         })
         .catch((error) => {
+            console.error("Access Token not valid");
             console.error(error);
             const refreshToken = localStorage.getItem(REFRESH_TOKEN);
 
-            if (refreshToken) {
-                if (configData.headers) {
-                    configData.headers = {
-                        ...headers,
-                        Authorization: `Bearer ${refreshToken}`
-                    };
-                } else {
-                    configData.headers = {
-                        Authorization: `Bearer ${refreshToken}`
-                    };
-                }
+            if (!refreshToken) {
+                console.error("Refresh Token not exists");
+                errorCallback(error);
+                return;
             }
-            axios(configData)
+
+            axios({
+                url: "/api/auth/refresh-token",
+                baseURL: baseUrl,
+                method: HttpMethod.POST,
+                params: {
+                    token: refreshToken
+                }
+            })
                 .then((response) => {
-                    const newAccessToken = response.headers["New-Access-Token"];
-                    const newRefreshToken =
-                        response.headers["New-Refresh-Token"];
-                    localStorage.setItem(ACCESS_TOKEN, newAccessToken);
-                    localStorage.setItem(REFRESH_TOKEN, newRefreshToken);
-                    callback(response);
+                    const data = response.data as {
+                        accessToken: string;
+                        refreshToken: string;
+                    };
+                    console.log(data);
+                    localStorage.setItem(ACCESS_TOKEN, data.accessToken);
+                    localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
+
+                    const newConfigData2 = {...configData};
+                    if (configData.headers) {
+                        newConfigData2.headers = {
+                            ...configData.headers,
+                            Authorization: `Bearer ${data.accessToken}`
+                        };
+                    } else {
+                        newConfigData2.headers = {
+                            Authorization: `Bearer ${data.accessToken}`
+                        };
+                    }
+                    axios(newConfigData2).then((response) =>
+                        callback(response)
+                    );
                 })
                 .catch((error) => {
-                    console.error(error);
-                    // window.location.href = "/sign-in";
-                    alert("Error");
+                    console.log("Refresh Token not valid");
+                    errorCallback(error);
                 });
         });
 }
