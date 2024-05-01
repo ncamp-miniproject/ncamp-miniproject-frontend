@@ -29,7 +29,7 @@ export default function ProductItem({
             <Card.Header>{prodNo}</Card.Header>
             <Card.Img
                 variant="top"
-                src={`${apiServerUrl}/images/uploadFiles/${imageFileName}`}
+                src={imageFileName ? imageFileName : ""}
             />
             <Card.Body>
                 <Card.Title>{prodName}</Card.Title>

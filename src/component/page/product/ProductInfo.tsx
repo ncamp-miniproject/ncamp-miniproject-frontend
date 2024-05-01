@@ -7,7 +7,6 @@ import {ProductImage} from "../../../domain/product";
 import httpRequest, {HttpMethod} from "../../../network/httpRequest";
 import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
 import * as Icon from "react-bootstrap-icons";
-import {apiServerUrl} from "../../../common/constants";
 
 export default function ProductInfo() {
     const [product, setProduct] = useState<
@@ -47,7 +46,11 @@ export default function ProductInfo() {
                             {thumbnailImageName && (
                                 <img
                                     className="thumbnail"
-                                    src={`${apiServerUrl}/images/uploadFiles/${thumbnailImageName}`}
+                                    src={
+                                        thumbnailImageName
+                                            ? thumbnailImageName
+                                            : ""
+                                    }
                                     alt="Product Thumnail"
                                 />
                             )}
@@ -199,7 +202,7 @@ function ProductImageDisplay({
                             productImages.length >= 1 &&
                             imgIdx >= 0 &&
                             imgIdx < productImages.length
-                                ? `${apiServerUrl}/images/uploadFiles/${productImages[imgIdx].fileName}`
+                                ? productImages[imgIdx].fileName
                                 : ""
                         }
                         alt="Product"

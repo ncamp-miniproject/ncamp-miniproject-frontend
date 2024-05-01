@@ -123,7 +123,7 @@ function ProductItem({
                     <img
                         src={
                             thumbnailFile
-                                ? `${apiServerUrl}/images/uploadFiles/${thumbnailFile.fileName}`
+                                ? thumbnailFile.fileName
                                 : ""
                         }
                         alt="prod"

@@ -39,7 +39,7 @@ export default function SaleList() {
                     <img
                         src={
                             sellerInfo?.profileImageFile
-                                ? `${apiServerUrl}/images/uploadFiles/${sellerInfo.profileImageFile}`
+                                ? sellerInfo.profileImageFile
                                 : ""
                         }
                         alt="Profile"

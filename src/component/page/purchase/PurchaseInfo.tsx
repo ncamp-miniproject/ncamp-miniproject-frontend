@@ -3,10 +3,8 @@ import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 import {PurchaseResponseBody} from "../../../network/apispec/purchase/purchaseSpec";
 import httpRequest from "../../../network/httpRequest";
-import {useAppSelector} from "../../../store/hook";
 import {Col, Container, Row} from "react-bootstrap";
 import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
-import {apiServerUrl} from "../../../common/constants";
 
 export default function PurchaseInfo() {
     const {tranNo} = useParams();
@@ -93,7 +91,7 @@ function TranProdInfo({
             <img
                 src={
                     thumbnailImage && thumbnailImage.length > 0
-                        ? `${apiServerUrl}/images/uploadFiles/${thumbnailImage[0].fileName}`
+                        ? thumbnailImage[0].fileName
                         : ""
                 }
                 alt="Product"
