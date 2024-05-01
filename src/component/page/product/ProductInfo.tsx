@@ -21,7 +21,6 @@ export default function ProductInfo() {
 
     useEffect(() => {
         prodNo &&
-            loginUser &&
             httpRequest({
                 url: `/api/products/${prodNo}`,
                 callback: (response) => {
@@ -29,7 +28,7 @@ export default function ProductInfo() {
                     setProduct(data);
                 },
                 params: {
-                    userId: loginUser.userId
+                    userId: loginUser?.userId
                 }
             });
     }, []);
