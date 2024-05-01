@@ -27,8 +27,6 @@ export default function ProductRegister() {
     const imageSelectionRef = useRef<HTMLImageElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     const prodNameRef = useRef<HTMLInputElement>(null);
     const prodDetailRef = useRef<HTMLInputElement>(null);
     const priceRef = useRef<HTMLInputElement>(null);
@@ -40,18 +38,14 @@ export default function ProductRegister() {
     const loginUser = useAppSelector((state) => state.loginUser.value);
 
     useEffect(() => {
-        if (apiUrl) {
-            httpRequest({
-                url: `/api/categories`,
-                callback: (response) => {
-                    const responseEntity =
-                        response.data as CategoryResponseEntity;
-                    setCategoryList(responseEntity.map((re) => re as Category));
-                },
-                baseUrl: apiUrl
-            });
-        }
-    }, [apiUrl]);
+        httpRequest({
+            url: `/api/categories`,
+            callback: (response) => {
+                const responseEntity = response.data as CategoryResponseEntity;
+                setCategoryList(responseEntity.map((re) => re as Category));
+            }
+        });
+    }, []);
 
     return (
         <Container>
@@ -229,58 +223,53 @@ export default function ProductRegister() {
                             if (!stock) {
                                 alert("재고는 꼭 입력하시오");
                             }
-                            if (apiUrl) {
-                                const body = {
-                                    seller: loginUser!.userId,
-                                    prodName,
-                                    prodDetail,
-                                    price,
-                                    manuDate: `${manuDate.getFullYear()}-${
-                                        manuDate.getMonth() + 1 < 10
-                                            ? `0${manuDate.getMonth() + 1}`
-                                            : manuDate.getMonth() + 1
-                                    }-${manuDate.getDate()}`,
-                                    stock,
-                                    productImageDto: imageDataList.map(
-                                        (data, idx) => {
-                                            return {
-                                                fileExtension:
-                                                    data.fileType.split("/")[1],
-                                                base64Data:
-                                                    data.imageData.substring(
-                                                        "data:image/png;base64,"
-                                                            .length
-                                                    ), // TODO
-                                                description: data.imageDesc,
-                                                thumbnail: idx === 0
-                                            };
-                                        }
-                                    )
-                                } as ProductRegisterRequestBody;
-                                if (categoryNo && categoryNo >= 0) {
-                                    body.categoryNo = categoryNo;
-                                }
-
-                                console.log(body);
-
-                                $("body").attr("disabled", "true");
-                                httpRequest({
-                                    url: "/api/products",
-                                    baseUrl: apiUrl,
-                                    callback: (response) => {
-                                        if (
-                                            Math.round(
-                                                response.status / 100
-                                            ) === 2
-                                        ) {
-                                            alert("성공!");
-                                            navigate("/"); // TODO
-                                        }
-                                    },
-                                    method: HttpMethod.POST,
-                                    body
-                                });
+                            const body = {
+                                seller: loginUser!.userId,
+                                prodName,
+                                prodDetail,
+                                price,
+                                manuDate: `${manuDate.getFullYear()}-${
+                                    manuDate.getMonth() + 1 < 10
+                                        ? `0${manuDate.getMonth() + 1}`
+                                        : manuDate.getMonth() + 1
+                                }-${manuDate.getDate()}`,
+                                stock,
+                                productImageDto: imageDataList.map(
+                                    (data, idx) => {
+                                        return {
+                                            fileExtension:
+                                                data.fileType.split("/")[1],
+                                            base64Data:
+                                                data.imageData.substring(
+                                                    "data:image/png;base64,"
+                                                        .length
+                                                ), // TODO
+                                            description: data.imageDesc,
+                                            thumbnail: idx === 0
+                                        };
+                                    }
+                                )
+                            } as ProductRegisterRequestBody;
+                            if (categoryNo && categoryNo >= 0) {
+                                body.categoryNo = categoryNo;
                             }
+
+                            console.log(body);
+
+                            $("body").attr("disabled", "true");
+                            httpRequest({
+                                url: "/api/products",
+                                callback: (response) => {
+                                    if (
+                                        Math.round(response.status / 100) === 2
+                                    ) {
+                                        alert("성공!");
+                                        navigate("/"); // TODO
+                                    }
+                                },
+                                method: HttpMethod.POST,
+                                body
+                            });
                         }}
                     >
                         등록

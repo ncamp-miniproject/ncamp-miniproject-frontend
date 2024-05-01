@@ -1,18 +1,16 @@
 import {useParams, useSearchParams} from "react-router-dom";
-import {useAppSelector} from "../../../store/hook";
 import {useEffect, useState} from "react";
 import {Col, Container, Row} from "react-bootstrap";
 import ProductList from "./ProductList";
 import httpRequest from "../../../network/httpRequest";
 import {SellerInfo} from "../../../network/apispec/seller/sellerInfoSpec";
+import {apiServerUrl} from "../../../common/constants";
 
 export default function SaleList() {
     const {seller} = useParams();
     const [queryParameters, setQueryParameters] = useSearchParams();
 
     const [sellerInfo, setSellerInfo] = useState<SellerInfo>();
-
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
 
     useEffect(() => {
         if (seller) {
@@ -22,17 +20,16 @@ export default function SaleList() {
     }, []);
 
     useEffect(() => {
-        if (apiUrl && queryParameters.has("seller")) {
+        if (queryParameters.has("seller")) {
             httpRequest({
                 url: `/api/seller/${queryParameters.get("seller")}`,
-                baseUrl: apiUrl,
                 callback: (response) => {
                     const data = response.data as SellerInfo;
                     setSellerInfo(data);
                 }
             });
         }
-    }, [apiUrl, queryParameters]);
+    }, [queryParameters]);
 
     return (
         <Container>
@@ -41,8 +38,8 @@ export default function SaleList() {
                 <Col md={4}>
                     <img
                         src={
-                            apiUrl && sellerInfo?.profileImageFile
-                                ? `${apiUrl}/images/uploadFiles/${sellerInfo.profileImageFile}`
+                            sellerInfo?.profileImageFile
+                                ? `${apiServerUrl}/images/uploadFiles/${sellerInfo.profileImageFile}`
                                 : ""
                         }
                         alt="Profile"

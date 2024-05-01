@@ -28,10 +28,9 @@ export default function PurchaseList() {
     });
 
     const loginUser = useAppSelector((state) => state.loginUser.value);
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
 
     useEffect(() => {
-        if (apiUrl && loginUser && loginUser.role) {
+        if (loginUser && loginUser.role) {
             let requestUrl: string;
             const apiQueryParameters = {} as any;
             console.log(queryParameters);
@@ -40,11 +39,11 @@ export default function PurchaseList() {
             });
             switch (loginUser.role) {
                 case Role.USER:
-                    requestUrl = `${apiUrl}/api/purchases`;
+                    requestUrl = `/api/purchases`;
                     apiQueryParameters.buyerId = loginUser.userId;
                     break;
                 case Role.ADMIN:
-                    requestUrl = `${apiUrl}/api/purchases/sale/list`;
+                    requestUrl = `/api/purchases/sale/list`;
                     break;
                 default:
                     console.error(
@@ -64,7 +63,7 @@ export default function PurchaseList() {
                 params: apiQueryParameters
             });
         }
-    }, [apiUrl, loginUser, queryParameters]);
+    }, [loginUser, queryParameters]);
 
     return (
         <Container>
@@ -132,7 +131,6 @@ function PurchaseItem({purchase}: {purchase: PurchaseResponseBody}) {
     }, [purchase]);
 
     const loginUser = useAppSelector((state) => state.loginUser.value);
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
 
     const btnTitlePerTranStatus = btnTitlePerTranStatusMap.get(
         tranStatus ? parseInt(tranStatus.code) : -1
@@ -156,10 +154,9 @@ function PurchaseItem({purchase}: {purchase: PurchaseResponseBody}) {
                     <Button
                         variant="secondary"
                         onClick={() => {
-                            apiUrl &&
-                                tranStatus &&
+                            tranStatus &&
                                 httpRequest({
-                                    url: `${apiUrl}/api/purchases/${purchase.tranNo}/tran-code`,
+                                    url: `/api/purchases/${purchase.tranNo}/tran-code`,
                                     callback: (response) => {
                                         const data = response.data as {
                                             code: string;

@@ -6,23 +6,21 @@ import httpRequest from "../../../network/httpRequest";
 import {useAppSelector} from "../../../store/hook";
 import {Col, Container, Row} from "react-bootstrap";
 import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
+import {apiServerUrl} from "../../../common/constants";
 
 export default function PurchaseInfo() {
     const {tranNo} = useParams();
 
     const [purchaseInfo, setPurchaseInfo] = useState<PurchaseResponseBody>();
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     useEffect(() => {
-        apiUrl &&
-            httpRequest({
-                url: `${apiUrl}/api/purchases/${tranNo}`,
-                callback: (response) => {
-                    setPurchaseInfo(response.data);
-                }
-            });
-    }, [apiUrl]);
+        httpRequest({
+            url: `/api/purchases/${tranNo}`,
+            callback: (response) => {
+                setPurchaseInfo(response.data);
+            }
+        });
+    }, []);
 
     return (
         <Container>
@@ -86,7 +84,6 @@ function TranProdInfo({
     product: ProductInfoResponseBody;
     quantity: number;
 }) {
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     const thumbnailImage =
         product &&
         product.productImages &&
@@ -95,8 +92,8 @@ function TranProdInfo({
         <div className="tran-prod-info">
             <img
                 src={
-                    apiUrl && thumbnailImage && thumbnailImage.length > 0
-                        ? `${apiUrl}/images/uploadFiles/${thumbnailImage[0].fileName}`
+                    thumbnailImage && thumbnailImage.length > 0
+                        ? `${apiServerUrl}/images/uploadFiles/${thumbnailImage[0].fileName}`
                         : ""
                 }
                 alt="Product"

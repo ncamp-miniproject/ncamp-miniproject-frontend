@@ -1,10 +1,10 @@
 import {useEffect, useState} from "react";
 import httpRequest, {HttpMethod} from "../../../network/httpRequest";
-import {useAppSelector} from "../../../store/hook";
 import {CartListResponseBody} from "../../../network/apispec/cart/cartSpec";
 import {Button, Col, Container, ListGroup, Row} from "react-bootstrap";
 import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
 import {useNavigate} from "react-router-dom";
+import {apiServerUrl} from "../../../common/constants";
 
 export default function CartList() {
     const [productsInCart, setProductInCarts] = useState<
@@ -13,23 +13,20 @@ export default function CartList() {
     const [itemCount, setItemCount] = useState(0);
     const [priceSum, setPriceSum] = useState(0);
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     useEffect(() => {
-        apiUrl &&
-            httpRequest({
-                url: `${apiUrl}/api/cart`,
-                callback: (response) => {
-                    const data = response.data as CartListResponseBody;
-                    console.log(data);
-                    setProductInCarts(data.productsInCart);
-                    setItemCount(data.itemCount);
-                    setPriceSum(data.priceSum);
-                },
-                method: HttpMethod.GET,
-                withCredentials: true
-            });
-    }, [apiUrl]);
+        httpRequest({
+            url: `/api/cart`,
+            callback: (response) => {
+                const data = response.data as CartListResponseBody;
+                console.log(data);
+                setProductInCarts(data.productsInCart);
+                setItemCount(data.itemCount);
+                setPriceSum(data.priceSum);
+            },
+            method: HttpMethod.GET,
+            withCredentials: true
+        });
+    }, []);
 
     useEffect(() => {
         let ic = 0;
@@ -65,21 +62,18 @@ export default function CartList() {
             <Button
                 variant="danger"
                 onClick={() => {
-                    if (apiUrl) {
-                        httpRequest({
-                            url: "/api/cart",
-                            baseUrl: apiUrl,
-                            callback: (response) => {
-                                if (response.status === 204) {
-                                    setProductInCarts([]);
-                                    setItemCount(0);
-                                    setPriceSum(0);
-                                }
-                            },
-                            method: HttpMethod.DELETE,
-                            withCredentials: true
-                        });
-                    }
+                    httpRequest({
+                        url: "/api/cart",
+                        callback: (response) => {
+                            if (response.status === 204) {
+                                setProductInCarts([]);
+                                setItemCount(0);
+                                setPriceSum(0);
+                            }
+                        },
+                        method: HttpMethod.DELETE,
+                        withCredentials: true
+                    });
                 }}
             >
                 초기화
@@ -115,8 +109,6 @@ function ProductItem({
     >;
     index: number;
 }) {
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     const product = productsInCart[index].product;
     const quantity = productsInCart[index].quantity;
 
@@ -130,8 +122,8 @@ function ProductItem({
                 <Col md={3}>
                     <img
                         src={
-                            apiUrl && thumbnailFile
-                                ? `${apiUrl}/images/uploadFiles/${thumbnailFile.fileName}`
+                            thumbnailFile
+                                ? `${apiServerUrl}/images/uploadFiles/${thumbnailFile.fileName}`
                                 : ""
                         }
                         alt="prod"

@@ -7,6 +7,7 @@ import {ProductImage} from "../../../domain/product";
 import httpRequest, {HttpMethod} from "../../../network/httpRequest";
 import {ProductInfoResponseBody} from "../../../network/apispec/product/productSpec";
 import * as Icon from "react-bootstrap-icons";
+import {apiServerUrl} from "../../../common/constants";
 
 export default function ProductInfo() {
     const [product, setProduct] = useState<
@@ -16,15 +17,13 @@ export default function ProductInfo() {
 
     const {prodNo} = useParams();
     const loginUser = useAppSelector((state) => state.loginUser.value);
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     const navigate = useNavigate();
 
     useEffect(() => {
-        apiUrl &&
-            prodNo &&
+        prodNo &&
             loginUser &&
             httpRequest({
-                url: `${apiUrl}/api/products/${prodNo}`,
+                url: `/api/products/${prodNo}`,
                 callback: (response) => {
                     const data = response.data as ProductInfoResponseBody;
                     setProduct(data);
@@ -33,7 +32,7 @@ export default function ProductInfo() {
                     userId: loginUser.userId
                 }
             });
-    }, [apiUrl]);
+    }, []);
 
     const thumbnailImageName = product?.productImages.filter(
         (d) => d.thumbnail
@@ -49,11 +48,7 @@ export default function ProductInfo() {
                             {thumbnailImageName && (
                                 <img
                                     className="thumbnail"
-                                    src={
-                                        apiUrl
-                                            ? `${apiUrl}/images/uploadFiles/${thumbnailImageName}`
-                                            : ""
-                                    }
+                                    src={`${apiServerUrl}/images/uploadFiles/${thumbnailImageName}`}
                                     alt="Product Thumnail"
                                 />
                             )}
@@ -128,10 +123,10 @@ export default function ProductInfo() {
                                     <Button
                                         variant="primary"
                                         onClick={() => {
-                                            if (apiUrl && prodNo) {
+                                            if (prodNo) {
                                                 console.log("here");
                                                 httpRequest({
-                                                    url: `${apiUrl}/api/cart`,
+                                                    url: `/api/cart`,
                                                     callback: (response) => {
                                                         if (
                                                             Math.round(
@@ -187,8 +182,6 @@ function ProductImageDisplay({
         }
     }, [imgIdx]);
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     return (
         <>
             <p>
@@ -203,12 +196,11 @@ function ProductImageDisplay({
                     <img
                         className="img-display"
                         src={
-                            apiUrl &&
                             productImages &&
                             productImages.length >= 1 &&
                             imgIdx >= 0 &&
                             imgIdx < productImages.length
-                                ? `${apiUrl}/images/uploadFiles/${productImages[imgIdx].fileName}`
+                                ? `${apiServerUrl}/images/uploadFiles/${productImages[imgIdx].fileName}`
                                 : ""
                         }
                         alt="Product"

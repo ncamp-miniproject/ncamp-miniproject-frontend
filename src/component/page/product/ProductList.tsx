@@ -39,56 +39,51 @@ export default function ProductList({menu}: {menu?: string}) {
 
     const loginUser = useAppSelector((state) => state.loginUser.value);
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     const params = {} as any;
     queryParameters.forEach((v, k) => {
         params[k] = v;
     });
 
     useEffect(() => {
-        if (apiUrl) {
-            if (
-                queryParameters.has("menu") &&
-                queryParameters.get("menu") === "manage" &&
-                loginUser &&
-                loginUser.role === Role.SELLER
-            ) {
-                console.log("here");
-                if (!queryParameters.has("seller")) {
-                    queryParameters.set("seller", loginUser.userId);
-                    setQueryParameters(queryParameters);
-                    return;
-                }
+        if (
+            queryParameters.has("menu") &&
+            queryParameters.get("menu") === "manage" &&
+            loginUser &&
+            loginUser.role === Role.SELLER
+        ) {
+            console.log("here");
+            if (!queryParameters.has("seller")) {
+                queryParameters.set("seller", loginUser.userId);
+                setQueryParameters(queryParameters);
+                return;
             }
-
-            httpRequest({
-                url: `${apiUrl}/api/products`,
-                callback: (response) => {
-                    const responseEntity =
-                        response.data as ProductListResponseEntity;
-                    console.log(responseEntity);
-                    setProducts(
-                        responseEntity.products.map((prod) => {
-                            return {...prod, manuDate: new Date(prod.manuDate)};
-                        })
-                    );
-                    setCount(responseEntity.count);
-                    setPagination(responseEntity.pagination);
-                },
-                params
-            });
-
-            httpRequest({
-                url: `${apiUrl}/api/categories`,
-                callback: (response) => {
-                    const responseEntity =
-                        response.data as CategoryResponseEntity;
-                    setCategoryList(responseEntity.map((re) => re as Category));
-                }
-            });
         }
-    }, [apiUrl, queryParameters, loginUser]);
+
+        httpRequest({
+            url: `/api/products`,
+            callback: (response) => {
+                const responseEntity =
+                    response.data as ProductListResponseEntity;
+                console.log(responseEntity);
+                setProducts(
+                    responseEntity.products.map((prod) => {
+                        return {...prod, manuDate: new Date(prod.manuDate)};
+                    })
+                );
+                setCount(responseEntity.count);
+                setPagination(responseEntity.pagination);
+            },
+            params
+        });
+
+        httpRequest({
+            url: `/api/categories`,
+            callback: (response) => {
+                const responseEntity = response.data as CategoryResponseEntity;
+                setCategoryList(responseEntity.map((re) => re as Category));
+            }
+        });
+    }, [queryParameters, loginUser]);
 
     let searchConditionForm;
     if (!searchConditionRef || searchConditionRef.current?.value === "1") {

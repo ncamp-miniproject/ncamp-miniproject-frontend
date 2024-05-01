@@ -10,7 +10,6 @@ import PageDisplay from "../../fragment/PageDisplay";
 export default function UserList() {
     const [queryParameters, setQueryParameters] = useSearchParams();
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     const [responseData, setResponseData] = useState<UserListResponseBody>({
         count: 0,
         list: [],
@@ -28,16 +27,15 @@ export default function UserList() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        apiUrl &&
-            httpRequest({
-                url: `${apiUrl}/api/users`,
-                callback: (response) => {
-                    const data = response.data as UserListResponseBody;
-                    setResponseData(data);
-                },
-                params: queryParameters
-            });
-    }, [apiUrl, queryParameters]);
+        httpRequest({
+            url: `/api/users`,
+            callback: (response) => {
+                const data = response.data as UserListResponseBody;
+                setResponseData(data);
+            },
+            params: queryParameters
+        });
+    }, [queryParameters]);
 
     return (
         <Container>

@@ -1,6 +1,7 @@
 import {Card} from "react-bootstrap";
 import {useAppSelector} from "../../../../store/hook";
 import {Category} from "../../../../domain/product";
+import {apiServerUrl} from "../../../../common/constants";
 
 type ProductItemData = {
     prodNo: number;
@@ -23,17 +24,12 @@ export default function ProductItem({
 }: ProductItemData) {
     const trimmedProdDetail =
         prodDetail.length > 15 ? prodDetail.substring(0, 15) : "";
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
     return (
         <Card>
             <Card.Header>{prodNo}</Card.Header>
             <Card.Img
                 variant="top"
-                src={
-                    apiUrl
-                        ? `${apiUrl}/images/uploadFiles/${imageFileName}`
-                        : ""
-                }
+                src={`${apiServerUrl}/images/uploadFiles/${imageFileName}`}
             />
             <Card.Body>
                 <Card.Title>{prodName}</Card.Title>

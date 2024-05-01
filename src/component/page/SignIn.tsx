@@ -1,13 +1,15 @@
 import {useEffect, useRef} from "react";
 import {Button, Form} from "react-bootstrap";
-import {SignInRequestBody} from "../../network/apispec/user/signInSpec";
-import {UserResponseBody} from "../../network/apispec/user/userSpec";
-import {useAppDispatch, useAppSelector} from "../../store/hook";
+import {useAppDispatch} from "../../store/hook";
 import {setLoginUser} from "../../store/slice/loginUser";
 import {useNavigate} from "react-router-dom";
 import $ from "jquery";
 import axios from "axios";
-import {ACCESS_TOKEN, REFRESH_TOKEN} from "../../common/constants";
+import {
+    ACCESS_TOKEN,
+    REFRESH_TOKEN,
+    apiServerUrl
+} from "../../common/constants";
 import {Role} from "../../domain/user";
 
 function SignIn() {
@@ -19,8 +21,6 @@ function SignIn() {
 
     const dispatch = useAppDispatch();
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     async function doSigningIn(
         userId: string | undefined,
         password: string | undefined
@@ -31,32 +31,30 @@ function SignIn() {
             return;
         }
 
-        if (apiUrl) {
-            axios
-                .post(`${apiUrl}/api/auth`, {userId, password})
-                .then((response) => {
-                    const data = response.data as {
-                        accessToken: string;
-                        refreshToken: string;
-                        userId: string;
-                        role: Role;
-                    };
-                    localStorage.setItem(ACCESS_TOKEN, data.accessToken);
-                    localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
-                    dispatch(
-                        setLoginUser({
-                            userId: data.userId,
-                            role: data.role
-                        })
-                    );
-                    navigate("/");
-                })
-                .catch((error) => {
-                    console.error(error);
-                    alert("로그인 실패");
-                    navigate("/");
-                });
-        }
+        axios
+            .post(`${apiServerUrl}/api/auth`, {userId, password})
+            .then((response) => {
+                const data = response.data as {
+                    accessToken: string;
+                    refreshToken: string;
+                    userId: string;
+                    role: Role;
+                };
+                localStorage.setItem(ACCESS_TOKEN, data.accessToken);
+                localStorage.setItem(REFRESH_TOKEN, data.refreshToken);
+                dispatch(
+                    setLoginUser({
+                        userId: data.userId,
+                        role: data.role
+                    })
+                );
+                navigate("/");
+            })
+            .catch((error) => {
+                console.error(error);
+                alert("로그인 실패");
+                navigate("/");
+            });
     }
 
     useEffect(() => {

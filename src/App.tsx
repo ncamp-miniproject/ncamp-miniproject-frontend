@@ -8,7 +8,6 @@ import SignIn from "./component/page/SignIn";
 import {useEffect} from "react";
 import axios from "axios";
 import SignUp from "./component/page/SignUp";
-import {Metadata, setMetadata} from "./store/slice/metadata";
 import {useAppDispatch, useAppSelector} from "./store/hook";
 import ProductList from "./component/page/product/ProductList";
 import {setLoginUser} from "./store/slice/loginUser";
@@ -30,51 +29,36 @@ import httpRequest from "./network/httpRequest";
 function App() {
     const dispatch = useAppDispatch();
 
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
-
     useEffect(() => {
         console.log("App.tsx");
         console.log(localStorage.getItem(ACCESS_TOKEN));
         console.log(localStorage.getItem(REFRESH_TOKEN));
 
-        // dispatch(setLoginUser({userId: "seller1", role: Role.SELLER}));
-
-        axios.get("/metadata.json").then((response) => {
-            const metadata = response.data as Metadata;
-            dispatch(setMetadata(metadata));
-        });
-
         // TODO: authenticate by sending request to the back-end server
+        const accessToken = localStorage.getItem(ACCESS_TOKEN);
+        httpRequest({
+            url: "/api/users/self/token",
+            callback: (response) => {
+                const data = response.data as {
+                    userId: string;
+                    role: Role;
+                };
+                dispatch(
+                    setLoginUser({
+                        userId: data.userId,
+                        role: data.role
+                    })
+                );
+            },
+            params: {
+                token: accessToken ? accessToken : ""
+            },
+            errorCallback: (error) => {
+                console.error(error);
+                dispatch(setLoginUser(null));
+            }
+        });
     }, []);
-
-    useEffect(() => {
-        if (apiUrl) {
-            const accessToken = localStorage.getItem(ACCESS_TOKEN);
-            httpRequest({
-                url: "/api/users/self/token",
-                callback: (response) => {
-                    const data = response.data as {
-                        userId: string;
-                        role: Role;
-                    };
-                    dispatch(
-                        setLoginUser({
-                            userId: data.userId,
-                            role: data.role
-                        })
-                    );
-                },
-                params: {
-                    token: accessToken ? accessToken : ""
-                },
-                baseUrl: apiUrl,
-                errorCallback: (error) => {
-                    console.error(error);
-                    dispatch(setLoginUser(null));
-                }
-            });
-        }
-    }, [apiUrl]);
 
     return (
         <>

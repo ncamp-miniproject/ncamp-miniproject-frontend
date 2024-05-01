@@ -1,5 +1,5 @@
 import axios, {AxiosResponse} from "axios";
-import {ACCESS_TOKEN, REFRESH_TOKEN} from "../common/constants";
+import {ACCESS_TOKEN, REFRESH_TOKEN, apiServerUrl} from "../common/constants";
 
 export enum HttpMethod {
     GET = "GET",
@@ -12,7 +12,6 @@ export enum HttpMethod {
 export type RequestConfig = {
     url: string;
     callback: (response: AxiosResponse<any, any>) => void;
-    baseUrl?: string;
     params?: object;
     method?: HttpMethod;
     body?: object;
@@ -24,7 +23,6 @@ export type RequestConfig = {
 export default function httpRequest({
     url,
     callback,
-    baseUrl,
     params,
     method,
     body,
@@ -35,7 +33,6 @@ export default function httpRequest({
     sendRequest(
         url,
         callback,
-        baseUrl,
         params,
         method,
         body,
@@ -48,7 +45,6 @@ export default function httpRequest({
 function sendRequest(
     url: string,
     callback: (response: AxiosResponse<any, any>) => void,
-    baseUrl: undefined | string = undefined,
     params: undefined | object = undefined,
     method: HttpMethod = HttpMethod.GET,
     body: undefined | object = undefined,
@@ -72,9 +68,7 @@ function sendRequest(
         configData.data = body;
     }
 
-    if (baseUrl) {
-        configData.baseURL = baseUrl;
-    }
+    configData.baseURL = apiServerUrl;
 
     const newConfigData = {...configData};
     if (configData.headers) {
@@ -105,7 +99,7 @@ function sendRequest(
 
             axios({
                 url: "/api/auth/refresh-token",
-                baseURL: baseUrl,
+                baseURL: apiServerUrl,
                 method: HttpMethod.POST,
                 params: {
                     token: refreshToken

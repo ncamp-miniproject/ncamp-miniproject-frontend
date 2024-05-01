@@ -22,7 +22,6 @@ export default function PurchaseForm() {
     });
 
     const loginUser = useAppSelector((state) => state.loginUser.value);
-    const apiUrl = useAppSelector((state) => state.metadata.apiUrl);
 
     const [paymentOption, setPaymentOption] = useState<string>("0");
     const receiverNameRef = useRef<HTMLInputElement>(null);
@@ -38,7 +37,6 @@ export default function PurchaseForm() {
     const navigate = useNavigate();
 
     function validateInputs() {
-        console.log(apiUrl);
         console.log(buyer);
         console.log(paymentOption);
         console.log(receiverNameRef.current?.value);
@@ -46,7 +44,6 @@ export default function PurchaseForm() {
         console.log(receiverAddrRef.current?.value);
         console.log(divyDate);
         return (
-            apiUrl &&
             buyer &&
             paymentOption &&
             receiverNameRef.current?.value !== "" &&
@@ -58,9 +55,9 @@ export default function PurchaseForm() {
     }
 
     useEffect(() => {
-        if (loginUser && apiUrl) {
+        if (loginUser) {
             httpRequest({
-                url: `${apiUrl}/api/users/${loginUser.userId}`,
+                url: `/api/users/${loginUser.userId}`,
                 callback: (response) => {
                     const data = response.data as UserResponseBody;
                     setBuyer(data);
@@ -113,14 +110,13 @@ export default function PurchaseForm() {
                             productsInCart: n
                         });
                     },
-                    baseUrl: apiUrl,
                     params: {
                         prodNos: prods.join(",")
                     }
                 });
             }
         }
-    }, [loginUser, apiUrl]);
+    }, [loginUser]);
 
     return (
         <Container>
@@ -277,7 +273,6 @@ export default function PurchaseForm() {
                                         alert("구매에 실패했습니다.");
                                     }
                                 },
-                                baseUrl: `${apiUrl}`,
                                 method: HttpMethod.POST,
                                 body: {
                                     buyerId: buyer!.userId,
