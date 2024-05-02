@@ -232,7 +232,7 @@ export default function ProductRegister() {
                                     manuDate.getMonth() + 1 < 10
                                         ? `0${manuDate.getMonth() + 1}`
                                         : manuDate.getMonth() + 1
-                                }-${manuDate.getDate()}`,
+                                }-${manuDate.getDate() < 10 ? `0${manuDate.getDate()}` : manuDate.getDate()}`,
                                 stock,
                                 productImageDto: imageDataList.map(
                                     (data, idx) => {
